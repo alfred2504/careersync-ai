@@ -1,0 +1,35 @@
+{
+  "name": "careersync-ai",
+  "version": "1.0.0",
+  "description": "CareerSync AI - AI-powered job board platform (Vite + Express monorepo)",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "build": "npm run build --prefix client && npm run build --prefix server",
+    "install-all": "npm install --prefix client && npm install --prefix server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alfred2504/careersync-ai.git"
+  },
+  "keywords": [
+    "ai",
+    "job-board",
+    "vite",
+    "express",
+    "fullstack",
+    "zimbabwe"
+  ],
+  "author": "Alfred Makura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alfred2504/careersync-ai/issues"
+  },
+  "homepage": "https://github.com/alfred2504/careersync-ai#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	color-scheme: light;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	background: radial-gradient(circle at 20% 20%, #e0ecff 0%, #f7f9ff 45%, #ffffff 100%);
+	color: #111827;
+}
+
+.register-page {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+}
+
+.register-card {
+	width: 100%;
+	max-width: 380px;
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 14px;
+	padding: 24px;
+	box-shadow: 0 12px 28px rgba(17, 24, 39, 0.1);
+}
+
+.register-title {
+	margin: 0 0 16px;
+	font-size: 1.35rem;
+	font-weight: 700;
+}
+
+.register-input {
+	width: 100%;
+	padding: 10px 12px;
+	margin-bottom: 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	font-size: 0.95rem;
+}
+
+.register-input:focus {
+	outline: 2px solid #93c5fd;
+	border-color: #3b82f6;
+}
+
+.register-button {
+	width: 100%;
+	border: 0;
+	border-radius: 8px;
+	padding: 10px 12px;
+	background: #2563eb;
+	color: #ffffff;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.register-button:hover {
+	background: #1d4ed8;
+}
