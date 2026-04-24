@@ -30,6 +30,8 @@
   },
   "homepage": "https://github.com/alfred2504/careersync-ai#readme",
   "dependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2",
+    "mongodb": "^7.2.0"
   }
 }
