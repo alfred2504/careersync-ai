@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const API = "http://localhost:5000/api";
 
@@ -82,6 +83,11 @@ export default function Login() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+
+        <div className="auth-links">
+          <Link to="/forgot-password" className="auth-link">Forgot password?</Link>
+          <Link to="/register" className="auth-link">Create account</Link>
+        </div>
       </form>
     </div>
   );

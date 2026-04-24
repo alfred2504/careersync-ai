@@ -4,6 +4,40 @@
 
 :root {
 	color-scheme: light;
+	--bg-page: radial-gradient(circle at 20% 20%, #e0ecff 0%, #f7f9ff 45%, #ffffff 100%);
+	--text-main: #111827;
+	--card-bg: #ffffff;
+	--card-border: #e5e7eb;
+	--card-shadow: 0 12px 28px rgba(17, 24, 39, 0.1);
+	--input-border: #d1d5db;
+	--input-focus-outline: #93c5fd;
+	--input-focus-border: #3b82f6;
+	--button-bg: #2563eb;
+	--button-bg-hover: #1d4ed8;
+	--button-text: #ffffff;
+	--toggle-bg: #ffffff;
+	--toggle-border: #cbd5e1;
+	--toggle-text: #0f172a;
+	--toggle-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+body.dark-theme {
+	color-scheme: dark;
+	--bg-page: radial-gradient(circle at 20% 20%, #1f2937 0%, #111827 45%, #030712 100%);
+	--text-main: #e5e7eb;
+	--card-bg: #111827;
+	--card-border: #334155;
+	--card-shadow: 0 14px 30px rgba(2, 6, 23, 0.55);
+	--input-border: #475569;
+	--input-focus-outline: #1d4ed8;
+	--input-focus-border: #60a5fa;
+	--button-bg: #3b82f6;
+	--button-bg-hover: #2563eb;
+	--button-text: #f8fafc;
+	--toggle-bg: #111827;
+	--toggle-border: #334155;
+	--toggle-text: #e2e8f0;
+	--toggle-shadow: 0 8px 24px rgba(2, 6, 23, 0.45);
 }
 
 * {
@@ -13,8 +47,28 @@
 body {
 	margin: 0;
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-	background: radial-gradient(circle at 20% 20%, #e0ecff 0%, #f7f9ff 45%, #ffffff 100%);
-	color: #111827;
+	background: var(--bg-page);
+	color: var(--text-main);
+}
+
+.theme-toggle {
+	position: fixed;
+	top: 18px;
+	right: 18px;
+	z-index: 20;
+	border: 1px solid var(--toggle-border);
+	background: var(--toggle-bg);
+	color: var(--toggle-text);
+	border-radius: 999px;
+	padding: 8px 14px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: var(--toggle-shadow);
+}
+
+.theme-toggle:hover {
+	transform: translateY(-1px);
 }
 
 .register-page {
@@ -28,11 +82,11 @@ body {
 .register-card {
 	width: 100%;
 	max-width: 380px;
-	background: #ffffff;
-	border: 1px solid #e5e7eb;
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
 	border-radius: 14px;
 	padding: 24px;
-	box-shadow: 0 12px 28px rgba(17, 24, 39, 0.1);
+	box-shadow: var(--card-shadow);
 }
 
 .register-title {
@@ -45,14 +99,16 @@ body {
 	width: 100%;
 	padding: 10px 12px;
 	margin-bottom: 12px;
-	border: 1px solid #d1d5db;
+	border: 1px solid var(--input-border);
 	border-radius: 8px;
 	font-size: 0.95rem;
+	background: transparent;
+	color: var(--text-main);
 }
 
 .register-input:focus {
-	outline: 2px solid #93c5fd;
-	border-color: #3b82f6;
+	outline: 2px solid var(--input-focus-outline);
+	border-color: var(--input-focus-border);
 }
 
 .register-button {
@@ -60,12 +116,36 @@ body {
 	border: 0;
 	border-radius: 8px;
 	padding: 10px 12px;
-	background: #2563eb;
-	color: #ffffff;
+	background: var(--button-bg);
+	color: var(--button-text);
 	font-weight: 600;
 	cursor: pointer;
 }
 
 .register-button:hover {
-	background: #1d4ed8;
+	background: var(--button-bg-hover);
+}
+
+.auth-links {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 14px;
+}
+
+.auth-link {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--button-bg);
+	text-decoration: none;
+}
+
+.auth-link:hover {
+	text-decoration: underline;
+}
+
+.auth-message {
+	margin: 14px 0 0;
+	font-size: 0.92rem;
+	line-height: 1.4;
 }

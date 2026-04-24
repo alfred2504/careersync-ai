@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import connectDB from "./config/db.js";   // ✅ ADD THIS
@@ -34,6 +35,14 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }
@@ -133,6 +142,50 @@ app.post("/api/auth/login", async (req, res) => {
   } catch (error) {
     console.error("Login error:", error.message);
     return res.status(500).json({ message: "Login failed." });
+  }
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ message: "Database is not connected." });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      return res.status(200).json({
+        message: "If an account exists, reset instructions were sent.",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetExpires;
+    await user.save();
+
+    const response = {
+      message: "If an account exists, reset instructions were sent.",
+    };
+
+    if (process.env.NODE_ENV !== "production") {
+      response.debugResetToken = resetToken;
+      response.debugResetExpires = resetExpires.toISOString();
+    }
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Forgot password error:", error.message);
+    return res.status(500).json({ message: "Could not process forgot password request." });
   }
 });
 

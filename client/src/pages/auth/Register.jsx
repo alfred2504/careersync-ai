@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 
 export default function Register() {
@@ -53,6 +54,10 @@ export default function Register() {
         <button className="register-button">
           Register
         </button>
+
+        <div className="auth-links">
+          <Link to="/login" className="auth-link">Already have an account? Login</Link>
+        </div>
       </form>
     </div>
   );
