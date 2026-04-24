@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AppRoutes from "./routes/AppRoutes";
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
