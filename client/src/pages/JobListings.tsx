@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API from "../services/api.js";
 
 type Job = {
   _id: string;
@@ -11,8 +12,6 @@ type Job = {
   description: string;
   isFeatured: boolean;
 };
-
-const API = "http://localhost:5000/api";
 
 export default function JobListings() {
   const [jobs, setJobs] = useState<Job[]>([]);

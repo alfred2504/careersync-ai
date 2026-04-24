@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
-const API = "http://localhost:5000/api";
+import API from "../../services/api.js";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
