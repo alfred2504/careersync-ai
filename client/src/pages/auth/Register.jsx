@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
+    role: "jobSeeker",
   });
 
   const handleChange = (e) => {
@@ -19,6 +22,7 @@ export default function Register() {
     try {
       const data = await registerUser(form);
       alert(data.message);
+      navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message || "Error");
     }
@@ -50,6 +54,19 @@ export default function Register() {
           className="register-input"
           onChange={handleChange}
         />
+
+        <label className="register-label" htmlFor="role">Registering as</label>
+        <select
+          id="role"
+          name="role"
+          className="register-input"
+          value={form.role}
+          onChange={handleChange}
+        >
+          <option value="jobSeeker">Job Seeker</option>
+          <option value="jobPoster">Job Poster</option>
+          <option value="admin">Admin</option>
+        </select>
 
         <button className="register-button">
           Register
