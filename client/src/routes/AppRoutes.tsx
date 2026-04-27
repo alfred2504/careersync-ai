@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
+import Landing from "../pages/Landing";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 import CreateJob from "../pages/jobs/CreateJob";
@@ -15,7 +16,7 @@ export default function AppRoutes() {
     <Router>
       <Routes>
         {/* PUBLIC */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 

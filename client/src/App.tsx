@@ -24,7 +24,7 @@ function App() {
         onClick={toggleTheme}
         aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
       >
-        {theme === "light" ? "Dark mode" : "Light mode"}
+        {theme === "light" ? "☾" : "☀"}
       </button>
       <AppRoutes />
     </>
