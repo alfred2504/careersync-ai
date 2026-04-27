@@ -1,15 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
+import CreateJob from "../pages/jobs/CreateJob";
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
@@ -22,7 +22,14 @@ export default function AppRoutes() {
           }
         />
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/post-job"
+          element={
+            <ProtectedRoute>
+              <CreateJob />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
