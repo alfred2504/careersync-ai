@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getJobs } from "../../services/jobService";
+import { applyToJob } from "../../services/applicationService";
 
 type Job = {
   _id: string;
@@ -13,14 +14,22 @@ export default function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleApply = async (jobId: string) => {
+    try {
+      const res = await applyToJob({ jobId });
+      alert(res.message);
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Error applying");
+    }
+  };
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const data = await getJobs();
-        setJobs(Array.isArray(data) ? data : []);
+        setJobs(data);
       } catch (error) {
         console.error(error);
-        setJobs([]);
       }
       setLoading(false);
     };
@@ -43,6 +52,13 @@ export default function Jobs() {
             <p>{job.company}</p>
             <p>{job.location}</p>
             <p>{job.description}</p>
+
+            <button
+              onClick={() => handleApply(job._id)}
+              className="bg-blue-500 text-white p-2 mt-2"
+            >
+              Apply
+            </button>
           </div>
         ))}
       </div>
