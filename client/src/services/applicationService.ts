@@ -15,3 +15,24 @@ export const applyToJob = async (data: {
 
   return res.data;
 };
+
+// ✅ GET APPLICATIONS FOR A JOB
+export const getApplications = async (jobId: string) => {
+  const token = localStorage.getItem("token");
+
+  const res = await axios.get(`${API}/applications/${jobId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (Array.isArray(res.data)) {
+    return res.data;
+  }
+
+  if (Array.isArray(res.data?.applications)) {
+    return res.data.applications;
+  }
+
+  return [];
+};

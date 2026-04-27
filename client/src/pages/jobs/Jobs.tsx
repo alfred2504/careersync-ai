@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getJobs } from "../../services/jobService";
 import { applyToJob } from "../../services/applicationService";
 
@@ -59,6 +60,14 @@ export default function Jobs() {
             >
               Apply
             </button>
+
+            {/* 👇 View applications link */}
+            <Link
+              to={`/job/${job._id}/applications`}
+              className="block mt-2 text-blue-600"
+            >
+              View Applications
+            </Link>
           </div>
         ))}
       </div>

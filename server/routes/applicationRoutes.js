@@ -13,7 +13,6 @@ router.post("/", protect, async (req, res) => {
       return res.status(400).json({ message: "Job ID is required" });
     }
 
-    // prevent duplicate application
     const existing = await Application.findOne({
       job: jobId,
       user: req.user._id,
@@ -35,6 +34,21 @@ router.post("/", protect, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to apply" });
+  }
+});
+
+// ✅ GET APPLICATIONS FOR A JOB (Protected)
+router.get("/:jobId", protect, async (req, res) => {
+  try {
+    const applications = await Application.find({
+      job: req.params.jobId,
+    })
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json(applications);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch applications" });
   }
 });
 
