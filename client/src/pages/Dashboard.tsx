@@ -1,29 +1,33 @@
+import { useEffect, useState } from "react";
+import { getProfile } from "../services/userService";
+
+type UserProfile = {
+  name?: string;
+  email?: string;
+};
+
 export default function Dashboard() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const [user, setUser] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        setUser(data);
+      } catch (error) {
+        window.location.href = "/login";
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (!user) return <p>Loading...</p>;
 
   return (
-    <>
-      <section className="dashboard-hero-card">
-        <h1 className="dashboard-heading">Welcome, {user?.name || "Job Seeker"}</h1>
-        <p className="dashboard-subtext">
-          Track applications, discover matched opportunities, and optimize your profile from one place.
-        </p>
-      </section>
-
-      <section className="dashboard-stats-grid">
-        <article className="dashboard-stat-card">
-          <h3>Saved Jobs</h3>
-          <p>12</p>
-        </article>
-        <article className="dashboard-stat-card">
-          <h3>Applications</h3>
-          <p>5</p>
-        </article>
-        <article className="dashboard-stat-card">
-          <h3>Profile Match</h3>
-          <p>82%</p>
-        </article>
-      </section>
-    </>
+    <div className="p-6">
+      <h1>Welcome, {user.name} 👋</h1>
+      <p>Email: {user.email}</p>
+    </div>
   );
 }

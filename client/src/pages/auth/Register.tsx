@@ -1,30 +1,51 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
+
+type RegisterForm = {
+  name: string;
+  email: string;
+  password: string;
+  role: "jobSeeker" | "jobPoster" | "admin";
+};
+
+type ErrorResponseShape = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
 
 export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<RegisterForm>({
     name: "",
     email: "",
     password: "",
     role: "jobSeeker",
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setForm((prev) =>
+      name === "role"
+        ? { ...prev, role: value as RegisterForm["role"] }
+        : { ...prev, [name]: value }
+    );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const data = await registerUser(form);
       alert(data.message);
       navigate("/login");
-    } catch (err) {
-      alert(err.response?.data?.message || "Error");
+    } catch (err: unknown) {
+      const error = err as ErrorResponseShape;
+      alert(error.response?.data?.message || "Error");
     }
   };
 
