@@ -4,9 +4,11 @@ import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
+
 import CreateJob from "../pages/jobs/CreateJob";
 import Jobs from "../pages/jobs/Jobs";
 import JobApplications from "../pages/jobs/JobApplications";
+import AdminJobs from "../pages/admin/AdminJobs";
 
 export default function AppRoutes() {
   return (
@@ -40,6 +42,16 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <JobApplications />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ ADMIN ROUTE */}
+        <Route
+          path="/admin/jobs"
+          element={
+            <ProtectedRoute>
+              <AdminJobs />
             </ProtectedRoute>
           }
         />
