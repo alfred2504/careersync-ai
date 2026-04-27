@@ -26,8 +26,18 @@ router.post("/", protect, async (req, res) => {
       job,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Failed to create job" });
+  }
+});
+
+// ✅ GET ALL JOBS (Public)
+router.get("/", async (req, res) => {
+  try {
+    const jobs = await Job.find().sort({ createdAt: -1 });
+
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch jobs" });
   }
 });
 

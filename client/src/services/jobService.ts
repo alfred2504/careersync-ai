@@ -17,3 +17,18 @@ export const createJob = async (formData: {
 
   return res.data;
 };
+
+// ✅ GET ALL JOBS
+export const getJobs = async () => {
+  const res = await axios.get(`${API}/jobs`);
+
+  if (Array.isArray(res.data)) {
+    return res.data;
+  }
+
+  if (Array.isArray(res.data?.jobs)) {
+    return res.data.jobs;
+  }
+
+  return [];
+};
