@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { getJobs } from "../../services/jobService";
 import { applyToJob } from "../../services/applicationService";
+import { useNavigate } from "react-router-dom";
 
 type Job = {
   _id: string;
@@ -14,13 +14,15 @@ type Job = {
 export default function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const handleApply = async (jobId: string) => {
     try {
       const res = await applyToJob({ jobId });
       alert(res.message);
     } catch (err: any) {
-      alert(err.response?.data?.message || "Error applying");
+      alert(err.response?.data?.message || "Login required");
+      navigate("/login");
     }
   };
 
@@ -42,7 +44,16 @@ export default function Jobs() {
 
   return (
     <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Available Jobs</h2>
+      <div className="flex justify-between mb-4">
+        <h2 className="text-xl font-bold">Available Jobs</h2>
+
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="bg-black text-white p-2"
+        >
+          Dashboard
+        </button>
+      </div>
 
       {jobs.length === 0 && <p>No jobs available</p>}
 
@@ -60,14 +71,6 @@ export default function Jobs() {
             >
               Apply
             </button>
-
-            {/* 👇 View applications link */}
-            <Link
-              to={`/job/${job._id}/applications`}
-              className="block mt-2 text-blue-600"
-            >
-              View Applications
-            </Link>
           </div>
         ))}
       </div>

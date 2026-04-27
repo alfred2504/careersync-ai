@@ -14,10 +14,20 @@ export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Jobs />} />
-
+        {/* PUBLIC */}
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+
+        {/* PROTECTED */}
+        <Route
+          path="/jobs"
+          element={
+            <ProtectedRoute>
+              <Jobs />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/dashboard"
@@ -46,7 +56,6 @@ export default function AppRoutes() {
           }
         />
 
-        {/* ✅ ADMIN ROUTE */}
         <Route
           path="/admin/jobs"
           element={

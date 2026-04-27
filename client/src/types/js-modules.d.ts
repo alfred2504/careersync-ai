@@ -10,6 +10,12 @@ declare module "*.js" {
 
 declare module "*authService" {
   export const registerUser: (data: any) => Promise<any>;
+  export const loginUser: (data: any) => Promise<any>;
+}
+
+declare module "../../services/authService" {
+  export const registerUser: (data: any) => Promise<any>;
+  export const loginUser: (data: any) => Promise<any>;
 }
 
 declare module "*userService" {

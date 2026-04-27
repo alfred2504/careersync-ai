@@ -1,59 +1,32 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import API from "../../services/api.js";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../services/authService";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const [loading, setLoading] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      const res = await fetch(`${API}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const data = await loginUser(form);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        setLoading(false);
-        return;
-      }
-
-      // ✅ Save token
       localStorage.setItem("token", data.token);
-
-      // ✅ Save user
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Login successful 🚀");
-
-      // 👉 redirect
-      window.location.href = "/dashboard";
-
-    } catch (error) {
-      alert("Network error");
+      navigate("/dashboard"); // ✅ clean redirect
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Error");
     }
-
-    setLoading(false);
   };
 
   return (
@@ -64,28 +37,24 @@ export default function Login() {
         <input
           name="email"
           placeholder="Email"
-          onChange={handleChange}
           className="register-input"
+          onChange={handleChange}
         />
 
         <input
           name="password"
           type="password"
           placeholder="Password"
-          onChange={handleChange}
           className="register-input"
+          onChange={handleChange}
         />
 
-        <button
-          type="submit"
-          className="register-button"
-        >
-          {loading ? "Logging in..." : "Login"}
+        <button className="register-button">
+          Login
         </button>
 
         <div className="auth-links">
-          <Link to="/forgot-password" className="auth-link">Forgot password?</Link>
-          <Link to="/register" className="auth-link">Create account</Link>
+          <Link to="/register" className="auth-link">Need an account? Register</Link>
         </div>
       </form>
     </div>
