@@ -5,11 +5,13 @@ import Login from "../pages/auth/Login";
 import Dashboard from "../pages/Dashboard";
 import Landing from "../pages/Landing";
 import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedLayout from "../components/ProtectedLayout";
 
 import CreateJob from "../pages/jobs/CreateJob";
 import Jobs from "../pages/jobs/Jobs";
 import JobApplications from "../pages/jobs/JobApplications";
 import AdminJobs from "../pages/admin/AdminJobs";
+import JobListings from "../pages/JobListings";
 
 export default function AppRoutes() {
   return (
@@ -22,49 +24,19 @@ export default function AppRoutes() {
 
         {/* PROTECTED */}
         <Route
-          path="/jobs"
           element={
             <ProtectedRoute>
-              <Jobs />
+              <ProtectedLayout />
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/post-job"
-          element={
-            <ProtectedRoute>
-              <CreateJob />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/job/:jobId/applications"
-          element={
-            <ProtectedRoute>
-              <JobApplications />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/jobs"
-          element={
-            <ProtectedRoute>
-              <AdminJobs />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/job-listings" element={<JobListings />} />
+          <Route path="/post-job" element={<CreateJob />} />
+          <Route path="/job/:jobId/applications" element={<JobApplications />} />
+          <Route path="/admin/jobs" element={<AdminJobs />} />
+        </Route>
       </Routes>
     </Router>
   );

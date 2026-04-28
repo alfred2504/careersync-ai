@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import API from "../services/api.js";
 
 type Job = {
@@ -17,6 +18,7 @@ export default function JobListings() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [searchParams] = useSearchParams();
 
   const [filters, setFilters] = useState({
     search: "",
@@ -26,18 +28,18 @@ export default function JobListings() {
     maxSalary: "",
   });
 
-  const loadJobs = async () => {
+  const loadJobs = async (nextFilters = filters) => {
     setLoading(true);
     setError("");
 
     try {
       const params = new URLSearchParams();
 
-      if (filters.search) params.set("search", filters.search);
-      if (filters.location) params.set("location", filters.location);
-      if (filters.jobType) params.set("jobType", filters.jobType);
-      if (filters.minSalary) params.set("minSalary", filters.minSalary);
-      if (filters.maxSalary) params.set("maxSalary", filters.maxSalary);
+      if (nextFilters.search) params.set("search", nextFilters.search);
+      if (nextFilters.location) params.set("location", nextFilters.location);
+      if (nextFilters.jobType) params.set("jobType", nextFilters.jobType);
+      if (nextFilters.minSalary) params.set("minSalary", nextFilters.minSalary);
+      if (nextFilters.maxSalary) params.set("maxSalary", nextFilters.maxSalary);
 
       const res = await fetch(`${API}/jobs?${params.toString()}`);
       const data = await res.json();
@@ -55,8 +57,17 @@ export default function JobListings() {
   };
 
   useEffect(() => {
+    const searchFromNav = searchParams.get("search") || "";
+
+    if (searchFromNav !== filters.search) {
+      const nextFilters = { ...filters, search: searchFromNav };
+      setFilters(nextFilters);
+      loadJobs(nextFilters);
+      return;
+    }
+
     loadJobs();
-  }, []);
+  }, [searchParams]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilters((prev) => ({ ...prev, [e.target.name]: e.target.value }));
