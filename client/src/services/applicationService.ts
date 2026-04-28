@@ -1,10 +1,7 @@
 import axios from "axios";
 import API from "./api.js";
 
-export const applyToJob = async (data: {
-  jobId: string;
-  coverLetter?: string;
-}) => {
+export const applyToJob = async (data: FormData) => {
   const token = localStorage.getItem("token");
 
   const res = await axios.post(`${API}/applications`, data, {

@@ -48,29 +48,29 @@ export default function Dashboard() {
   const isAdmin = normalizedRole === "admin";
 
   return (
-    <div className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-8">
-        <div className="mb-8 flex flex-col gap-2 border-b border-slate-200 pb-6">
-          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            Welcome, {user.name}
-          </h1>
-          <p className="text-sm text-slate-600">{user.email}</p>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+    <div className="app-shell">
+      <div className="page-frame">
+        <section className="page-hero">
+          <span className="section-chip">Workspace</span>
+          <h1 className="page-title">Welcome, {user.name}</h1>
+          <p className="page-subtitle">{user.email}</p>
+          <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
             Role: {normalizedRole || "user"}
           </p>
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="page-grid" style={{ gridTemplateColumns: "1fr" }}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <button
             onClick={() => navigate("/jobs")}
-            className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+            className="primary-action"
           >
             View Jobs
           </button>
 
           <button
             onClick={() => navigate("/post-job")}
-            className="rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            className="primary-action"
           >
             Post Job
           </button>
@@ -78,7 +78,7 @@ export default function Dashboard() {
           {isAdmin && (
             <button
               onClick={() => navigate("/admin/jobs")}
-              className="rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700"
+              className="primary-action"
             >
               Admin Panel
             </button>
@@ -89,17 +89,22 @@ export default function Dashboard() {
               localStorage.clear();
               navigate("/login");
             }}
-            className="rounded-lg bg-slate-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="primary-action"
           >
             Logout
           </button>
-        </div>
+          </div>
 
-        {!isAdmin && (
-          <p className="mt-4 text-sm text-slate-500">
-            Admin panel appears automatically when your account role is admin.
-          </p>
-        )}
+          {!isAdmin && (
+            <div className="info-card">
+              <p className="info-title">What you can do next</p>
+              <p className="muted-copy leading-7 text-slate-600">
+                Browse active jobs, submit your CV, and keep your profile ready for recruiter review.
+                The admin panel appears automatically when your account role is admin.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

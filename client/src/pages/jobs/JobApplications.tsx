@@ -9,6 +9,8 @@ type Application = {
     email: string;
   };
   coverLetter?: string;
+  cvUrl?: string;
+  cvOriginalName?: string;
 };
 
 export default function JobApplications() {
@@ -52,6 +54,16 @@ export default function JobApplications() {
             <h3 className="font-bold">{app.user.name}</h3>
             <p>{app.user.email}</p>
             {app.coverLetter && <p>{app.coverLetter}</p>}
+            {app.cvUrl && (
+              <a
+                href={app.cvUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 underline"
+              >
+                {app.cvOriginalName || "View CV"}
+              </a>
+            )}
           </div>
         ))}
       </div>

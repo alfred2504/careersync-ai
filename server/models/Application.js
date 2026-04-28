@@ -15,6 +15,12 @@ const applicationSchema = new mongoose.Schema(
     coverLetter: {
       type: String,
     },
+    cvUrl: {
+      type: String,
+    },
+    cvOriginalName: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
