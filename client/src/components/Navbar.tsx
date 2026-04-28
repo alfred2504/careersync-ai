@@ -10,6 +10,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [search, setSearch] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getStoredRole = () => {
     try {
@@ -46,6 +47,10 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  const handleNavClick = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className="app-navbar">
       <div className="navbar-brand-group">
@@ -68,21 +73,35 @@ export default function Navbar() {
         </button>
       </form>
 
-      <nav className="navbar-links" aria-label="Primary navigation">
-        <Link to="/dashboard" className="navbar-link">
+      <button
+        type="button"
+        className="navbar-hamburger"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+      </button>
+
+      <nav
+        className={`navbar-links ${mobileMenuOpen ? "mobile-open" : ""}`}
+        aria-label="Primary navigation"
+      >
+        <Link to="/dashboard" className="navbar-link" onClick={handleNavClick}>
           Dashboard
         </Link>
-        <Link to="/job-listings" className="navbar-link">
+        <Link to="/job-listings" className="navbar-link" onClick={handleNavClick}>
           Browse Jobs
         </Link>
-        <Link to="/jobs" className="navbar-link">
+        <Link to="/jobs" className="navbar-link" onClick={handleNavClick}>
           Apply
         </Link>
-        <Link to="/post-job" className="navbar-link">
+        <Link to="/post-job" className="navbar-link" onClick={handleNavClick}>
           Post Job
         </Link>
         {isAdmin && (
-          <Link to="/admin/jobs" className="navbar-link">
+          <Link to="/admin/jobs" className="navbar-link" onClick={handleNavClick}>
             Admin Panel
           </Link>
         )}
