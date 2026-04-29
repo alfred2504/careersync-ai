@@ -1,7 +1,9 @@
 import express from "express";
+import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 import multer from "multer";
+import Job from "../models/Job.js";
 import Application from "../models/Application.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -90,6 +92,25 @@ router.post("/", protect, handleCvUpload, async (req, res) => {
 // ✅ GET APPLICATIONS FOR A JOB (Protected)
 router.get("/:jobId", protect, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.jobId)) {
+      return res.status(400).json({ message: "Invalid job ID" });
+    }
+
+    const job = await Job.findById(req.params.jobId).select("createdBy");
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const isOwner = String(job.createdBy) === String(req.user._id);
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: "You can only view applications for jobs you posted",
+      });
+    }
+
     const applications = await Application.find({
       job: req.params.jobId,
     })

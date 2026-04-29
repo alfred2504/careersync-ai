@@ -17,19 +17,25 @@ export const applyToJob = async (data: FormData) => {
 export const getApplications = async (jobId: string) => {
   const token = localStorage.getItem("token");
 
-  const res = await axios.get(`${API}/applications/${jobId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const res = await axios.get(`${API}/applications/${jobId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  if (Array.isArray(res.data)) {
-    return res.data;
+    if (Array.isArray(res.data)) {
+      return res.data;
+    }
+
+    if (Array.isArray(res.data?.applications)) {
+      return res.data.applications;
+    }
+
+    return [];
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.message || error?.message || "Failed to fetch applications"
+    );
   }
-
-  if (Array.isArray(res.data?.applications)) {
-    return res.data.applications;
-  }
-
-  return [];
 };

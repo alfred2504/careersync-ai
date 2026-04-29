@@ -9,6 +9,7 @@ type Job = {
   company: string;
   location: string;
   description: string;
+  createdBy?: string;
 };
 
 type ApplicationDraft = {
@@ -25,11 +26,26 @@ const applicationTips = [
 export default function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [applicationDrafts, setApplicationDrafts] = useState<
     Record<string, ApplicationDraft>
   >({});
   const [submittingJobId, setSubmittingJobId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const getCurrentUserId = () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return "";
+
+      const parsed = JSON.parse(storedUser) as { id?: string };
+      return typeof parsed?.id === "string" ? parsed.id : "";
+    } catch {
+      return "";
+    }
+  };
+
+  const currentUserId = getCurrentUserId();
 
   const updateDraft = (jobId: string, draft: Partial<ApplicationDraft>) => {
     setApplicationDrafts((current) => ({
@@ -92,7 +108,19 @@ export default function Jobs() {
     fetchJobs();
   }, []);
 
-  if (loading) return <p>Loading jobs...</p>;
+  if (loading) {
+    return (
+      <div className="app-shell">
+        <div className="page-frame">
+          <div className="page-hero">
+            <span className="section-chip">Open roles</span>
+            <h1 className="page-title">Loading jobs...</h1>
+            <p className="page-subtitle">Fetching the latest roles and application details.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -104,6 +132,9 @@ export default function Jobs() {
               <h1 className="page-title">Apply with a CV that feels polished, not rushed.</h1>
               <p className="page-subtitle">
                 Review the role details, share a short note, and submit your CV in one clean step.
+              </p>
+              <p className="mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-slate-300">
+                {jobs.length} roles available
               </p>
             </div>
 
@@ -121,6 +152,9 @@ export default function Jobs() {
             {jobs.length === 0 && (
               <div className="info-card">
                 <p className="m-0 font-semibold">No jobs available right now.</p>
+                <p className="muted-copy mt-2 leading-7 text-slate-600">
+                  Try again later or return to the dashboard while new roles are being posted.
+                </p>
               </div>
             )}
 
@@ -129,6 +163,8 @@ export default function Jobs() {
                 coverLetter: "",
                 cvFile: null,
               };
+              const isOwner = job.createdBy && job.createdBy === currentUserId;
+              const isExpanded = expandedJobId === job._id;
 
               return (
                 <article key={job._id} className="job-card">
@@ -142,64 +178,85 @@ export default function Jobs() {
                       <div className="job-meta">
                         <span className="meta-pill">Location: {job.location}</span>
                         <span className="meta-pill">CV upload enabled</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedJobId((current) => (current === job._id ? null : job._id))
+                          }
+                          className="job-card-toggle"
+                          aria-expanded={isExpanded}
+                        >
+                          {isExpanded ? "Hide application" : "Apply now"}
+                        </button>
+                        {isOwner && (
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/job/${job._id}/applications`)}
+                            className="job-card-toggle job-card-toggle-secondary"
+                          >
+                            View applications
+                          </button>
+                        )}
                       </div>
                     </div>
 
                     <p className="job-description">{job.description}</p>
                   </div>
 
-                  <form
-                    className="apply-panel"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      handleApply(job._id);
-                    }}
-                  >
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <label className="field-label md:col-span-2">
-                        Cover letter
-                        <textarea
-                          value={application.coverLetter}
-                          onChange={(event) =>
-                            updateDraft(job._id, { coverLetter: event.target.value })
-                          }
-                          className="field-input min-h-32 resize-none"
-                          placeholder="Write a short note about why you are a fit"
-                        />
-                      </label>
+                  {isExpanded && (
+                    <form
+                      className="apply-panel"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        handleApply(job._id);
+                      }}
+                    >
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <label className="field-label md:col-span-2">
+                          Cover letter
+                          <textarea
+                            value={application.coverLetter}
+                            onChange={(event) =>
+                              updateDraft(job._id, { coverLetter: event.target.value })
+                            }
+                            className="field-input min-h-28 resize-none"
+                            placeholder="Write a short note about why you are a fit"
+                          />
+                        </label>
 
-                      <label className="field-label md:col-span-2">
-                        Upload CV
-                        <input
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={(event) =>
-                            updateDraft(job._id, {
-                              cvFile: event.target.files?.[0] ?? null,
-                            })
-                          }
-                          className="field-input"
-                        />
-                      </label>
-                    </div>
-
-                    <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="helper-row">
-                        <span>
-                          {application.cvFile ? `Selected: ${application.cvFile.name}` : "No CV selected yet"}
-                        </span>
-                        <span>Accepted formats: PDF, DOC, DOCX</span>
+                        <label className="field-label md:col-span-2">
+                          Upload CV
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={(event) =>
+                              updateDraft(job._id, {
+                                cvFile: event.target.files?.[0] ?? null,
+                              })
+                            }
+                            className="field-input"
+                          />
+                        </label>
                       </div>
 
-                      <button
-                        type="submit"
-                        disabled={submittingJobId === job._id}
-                        className="primary-action w-full sm:w-auto"
-                      >
-                        {submittingJobId === job._id ? "Submitting..." : "Apply now"}
-                      </button>
-                    </div>
-                  </form>
+                      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="helper-row">
+                          <span>
+                            {application.cvFile ? `Selected: ${application.cvFile.name}` : "No CV selected yet"}
+                          </span>
+                          <span>Accepted formats: PDF, DOC, DOCX</span>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={submittingJobId === job._id}
+                          className="primary-action w-full sm:w-auto"
+                        >
+                          {submittingJobId === job._id ? "Submitting..." : "Submit application"}
+                        </button>
+                      </div>
+                    </form>
+                  )}
                 </article>
               );
             })}
