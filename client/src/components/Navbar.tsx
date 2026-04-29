@@ -100,6 +100,9 @@ export default function Navbar() {
         <Link to="/post-job" className="navbar-link" onClick={handleNavClick}>
           Post Job
         </Link>
+        <Link to="/ai" className="navbar-link" onClick={handleNavClick}>
+          AI Assistant
+        </Link>
         {isAdmin && (
           <Link to="/admin/jobs" className="navbar-link" onClick={handleNavClick}>
             Admin Panel
