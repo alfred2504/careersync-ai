@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: careersync-ai
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    autoDeploy: true
+    nodeVersion: 24.14.1

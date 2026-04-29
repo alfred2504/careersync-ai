@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
@@ -14,7 +15,11 @@ import aiRoutes from "./routes/aiRoutes.js";
 dotenv.config();
 
 const app = express();
-const uploadsDir = path.resolve("uploads");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.resolve(__dirname, "uploads");
+const clientDistDir = path.resolve(__dirname, "..", "client", "dist");
+const clientIndexFile = path.join(clientDistDir, "index.html");
 
 fs.mkdirSync(uploadsDir, { recursive: true });
 
@@ -32,6 +37,19 @@ app.use("/api/user", userRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/ai", aiRoutes);
+
+if (fs.existsSync(clientDistDir)) {
+  app.use(express.static(clientDistDir));
+
+  app.get(/^(?!\/api).*/, (req, res) => {
+    if (fs.existsSync(clientIndexFile)) {
+      res.sendFile(clientIndexFile);
+      return;
+    }
+
+    res.status(404).json({ message: "Client build not found" });
+  });
+}
 
 // test route
 app.get("/", (req, res) => {
