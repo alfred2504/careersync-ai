@@ -39,3 +39,25 @@ export const getApplications = async (jobId: string) => {
     );
   }
 };
+
+export const updateApplicationStatus = async (applicationId: string, status: "accepted" | "rejected") => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await axios.put(
+      `${API}/applications/${applicationId}/status`,
+      { status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.message || error?.message || "Failed to update application"
+    );
+  }
+};

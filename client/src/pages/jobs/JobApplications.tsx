@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getApplications } from "../../services/applicationService";
+import { getApplications, updateApplicationStatus } from "../../services/applicationService";
 import { useNavigate, useParams } from "react-router-dom";
 
 type Application = {
@@ -12,6 +12,7 @@ type Application = {
   cvUrl?: string;
   cvOriginalName?: string;
   createdAt?: string;
+  status?: "pending" | "accepted" | "rejected";
 };
 
 export default function JobApplications() {
@@ -20,6 +21,7 @@ export default function JobApplications() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updatingApplicationId, setUpdatingApplicationId] = useState<string | null>(null);
 
   const applicationsWithCv = applications.filter((application) => Boolean(application.cvUrl)).length;
 
@@ -45,6 +47,29 @@ export default function JobApplications() {
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase())
       .join("") || "A";
+
+  const handleStatusUpdate = async (applicationId: string, status: "accepted" | "rejected") => {
+    setUpdatingApplicationId(applicationId);
+
+    try {
+      const response = await updateApplicationStatus(applicationId, status);
+      setApplications((current) =>
+        current.map((application) =>
+          application._id === applicationId
+            ? {
+                ...application,
+                status: response?.application?.status || status,
+              }
+            : application
+        )
+      );
+    } catch (updateError) {
+      const message = updateError instanceof Error ? updateError.message : "Failed to update application";
+      setError(message);
+    } finally {
+      setUpdatingApplicationId(null);
+    }
+  };
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -176,6 +201,9 @@ export default function JobApplications() {
                       <div className="application-meta-row">
                         <span className="meta-pill">Applied {formatDate(app.createdAt)}</span>
                         <span className="meta-pill">{app.cvUrl ? "CV included" : "No CV attached"}</span>
+                        <span className={`application-status-pill application-status-${app.status || "pending"}`}>
+                          {app.status || "pending"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -201,6 +229,34 @@ export default function JobApplications() {
                       ) : (
                         <span className="meta-pill application-no-cv">CV not uploaded</span>
                       )}
+
+                      <div className="application-decision-actions">
+                        <button
+                          type="button"
+                          className="application-decision-button application-accept-button"
+                          onClick={() => handleStatusUpdate(app._id, "accepted")}
+                          disabled={updatingApplicationId === app._id || app.status === "accepted"}
+                        >
+                          {updatingApplicationId === app._id && app.status !== "accepted"
+                            ? "Updating..."
+                            : app.status === "accepted"
+                              ? "Accepted"
+                              : "Accept"}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="application-decision-button application-reject-button"
+                          onClick={() => handleStatusUpdate(app._id, "rejected")}
+                          disabled={updatingApplicationId === app._id || app.status === "rejected"}
+                        >
+                          {updatingApplicationId === app._id && app.status !== "rejected"
+                            ? "Updating..."
+                            : app.status === "rejected"
+                              ? "Rejected"
+                              : "Reject"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </article>

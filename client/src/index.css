@@ -1,4 +1,3 @@
-@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root {
@@ -534,6 +533,45 @@ body.dark-theme .application-email {
 	gap: 10px;
 }
 
+.application-status-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
+	border-radius: 999px;
+	font-size: 0.84rem;
+	font-weight: 800;
+	text-transform: capitalize;
+	letter-spacing: 0.02em;
+}
+
+.application-status-pending {
+	background: rgba(245, 158, 11, 0.12);
+	color: #b45309;
+}
+
+.application-status-accepted {
+	background: rgba(34, 197, 94, 0.14);
+	color: #15803d;
+}
+
+.application-status-rejected {
+	background: rgba(239, 68, 68, 0.12);
+	color: #b91c1c;
+}
+
+body.dark-theme .application-status-pending {
+	color: #fbbf24;
+}
+
+body.dark-theme .application-status-accepted {
+	color: #86efac;
+}
+
+body.dark-theme .application-status-rejected {
+	color: #fca5a5;
+}
+
 .application-body {
 	padding: 18px 20px 22px;
 	display: grid;
@@ -559,15 +597,60 @@ body.dark-theme .application-copy {
 
 .application-actions {
 	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: stretch;
+}
+
+.application-decision-actions {
+	display: flex;
 	flex-wrap: wrap;
-	gap: 12px;
-	align-items: center;
+	gap: 10px;
+}
+
+.application-decision-button {
+	border: 1px solid transparent;
+	border-radius: 14px;
+	padding: 11px 14px;
+	font: inherit;
+	font-weight: 800;
+	cursor: pointer;
+	transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease, border-color 160ms ease;
+}
+
+.application-decision-button:hover {
+	transform: translateY(-1px);
+}
+
+.application-decision-button:disabled {
+	opacity: 0.65;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.application-accept-button {
+	background: linear-gradient(135deg, #16a34a, #0f766e);
+	color: #ffffff;
+	box-shadow: 0 14px 24px rgba(22, 163, 74, 0.18);
+}
+
+.application-reject-button {
+	background: rgba(239, 68, 68, 0.12);
+	color: #b91c1c;
+	border-color: rgba(239, 68, 68, 0.2);
+}
+
+body.dark-theme .application-reject-button {
+	background: rgba(239, 68, 68, 0.16);
+	color: #fca5a5;
+	border-color: rgba(248, 113, 113, 0.22);
 }
 
 .application-cv-button {
 	text-decoration: none;
 	padding-inline: 16px;
 	min-width: 160px;
+	align-self: flex-start;
 }
 
 .application-no-cv {

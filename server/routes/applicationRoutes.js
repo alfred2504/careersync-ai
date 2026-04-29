@@ -123,4 +123,56 @@ router.get("/:jobId", protect, async (req, res) => {
   }
 });
 
+// ✅ UPDATE APPLICATION STATUS (Poster/Admin only)
+router.put("/:applicationId/status", protect, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.applicationId)) {
+      return res.status(400).json({ message: "Invalid application ID" });
+    }
+
+    const { status } = req.body;
+    const allowedStatuses = ["accepted", "rejected"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid application status" });
+    }
+
+    const application = await Application.findById(req.params.applicationId);
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const job = await Job.findById(application.job).select("createdBy");
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const isOwner = String(job.createdBy) === String(req.user._id);
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: "You can only update applications for jobs you posted",
+      });
+    }
+
+    application.status = status;
+    await application.save();
+
+    const updatedApplication = await Application.findById(application._id).populate(
+      "user",
+      "name email"
+    );
+
+    return res.json({
+      message: `Application ${status}`,
+      application: updatedApplication,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to update application" });
+  }
+});
+
 export default router;
