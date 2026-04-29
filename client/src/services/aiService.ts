@@ -21,27 +21,31 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export const analyzeCV = async (cvText, jobDescription = "") => {
+export const analyzeCV = async (
+  cvText: string,
+  jobDescription = ""
+): Promise<any> => {
   try {
     const response = await apiClient.post("/ai/analyze-cv", {
       cvText,
       jobDescription,
     });
     return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Failed to analyze CV"
-    );
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.error || error.message);
+    }
+    throw new Error((error as Error)?.message || "Failed to analyze CV");
   }
 };
 
 export const generateCoverLetter = async (
-  jobTitle,
-  companyName,
+  jobTitle: string,
+  companyName: string,
   jobDescription = "",
   cvHighlights = "",
   tone = "professional"
-) => {
+): Promise<any> => {
   try {
     const response = await apiClient.post("/ai/generate-cover-letter", {
       jobTitle,
@@ -51,20 +55,21 @@ export const generateCoverLetter = async (
       tone,
     });
     return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Failed to generate cover letter"
-    );
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.error || error.message);
+    }
+    throw new Error((error as Error)?.message || "Failed to generate cover letter");
   }
 };
 
 export const generateJobDescription = async (
-  jobTitle,
-  companyName,
+  jobTitle: string,
+  companyName: string,
   department = "",
   seniority = "",
   keyResponsibilities = ""
-) => {
+): Promise<any> => {
   try {
     const response = await apiClient.post("/ai/generate-job-description", {
       jobTitle,
@@ -74,9 +79,10 @@ export const generateJobDescription = async (
       keyResponsibilities,
     });
     return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.error || "Failed to generate job description"
-    );
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.error || error.message);
+    }
+    throw new Error((error as Error)?.message || "Failed to generate job description");
   }
 };

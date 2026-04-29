@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   analyzeCV,
   generateCoverLetter,
@@ -9,7 +8,7 @@ import {
 type TabType = "cv-analysis" | "cover-letter" | "job-description";
 
 export default function AIAssistant() {
-  const navigate = useNavigate();
+  // navigation not used in this page
   const [activeTab, setActiveTab] = useState<TabType>("cv-analysis");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
