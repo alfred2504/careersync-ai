@@ -1120,6 +1120,35 @@ body.dark-theme .info-text {
 	padding: 6px 0;
 }
 
+.landing-top-image-block {
+	max-width: 1140px;
+	margin: 14px auto 0;
+	padding: 0;
+	position: relative;
+	z-index: 1;
+}
+
+.landing-bottom-image-block {
+	margin-top: 20px;
+	max-width: 620px;
+}
+
+.landing-hero-image {
+	display: block;
+	width: 100%;
+	border-radius: 18px;
+	object-fit: cover;
+	box-shadow: 0 18px 34px rgba(15, 23, 42, 0.16);
+}
+
+.landing-hero-image-top {
+	height: 170px;
+}
+
+.landing-hero-image-bottom {
+	height: 210px;
+}
+
 .landing-brand {
 	margin: 0;
 	font-weight: 800;
@@ -1155,16 +1184,20 @@ body.dark-theme .info-text {
 	position: relative;
 	z-index: 1;
 	max-width: 1140px;
-	margin: 34px auto 0;
+	margin: 18px auto 0;
 	display: grid;
 	grid-template-columns: 1.05fr 0.95fr;
 	gap: 22px;
 	align-items: center;
+	padding: 0 22px 34px;
 }
 
 .landing-copy {
 	opacity: 0;
 	animation: landingReveal 0.65s ease forwards;
+	max-width: 680px;
+	padding: 8px 6px;
+	align-self: center;
 }
 
 .landing-kicker {
@@ -1234,6 +1267,7 @@ body.dark-theme .info-text {
 	gap: 10px;
 	max-width: 620px;
 	width: 100%;
+    align-items: center;
 }
 
 .landing-metric-card {
@@ -1263,6 +1297,11 @@ body.dark-theme .info-text {
 	animation: landingReveal 0.65s ease forwards;
 	animation-delay: 0.15s;
 	animation-fill-mode: forwards;
+}
+
+.landing-visual-panel {
+    display: flex;
+    justify-content: center;
 }
 
 .landing-visual-shell {
@@ -1375,6 +1414,10 @@ body.dark-theme .landing-cta-primary {
 }
 
 @media (max-width: 960px) {
+	.landing-top-image-block {
+		padding: 0 22px;
+	}
+
 	.landing-hero {
 		grid-template-columns: 1fr;
 	}
@@ -1386,6 +1429,18 @@ body.dark-theme .landing-cta-primary {
 	.landing-visual-shell {
 		min-height: 330px;
 	}
+
+	.landing-bottom-image-block {
+		max-width: 100%;
+	}
+
+	.landing-hero-image-top {
+		height: 150px;
+	}
+
+	.landing-hero-image-bottom {
+		height: 190px;
+	}
 }
 
 @media (max-width: 640px) {
@@ -1393,9 +1448,30 @@ body.dark-theme .landing-cta-primary {
 		padding: 22px 14px 34px;
 	}
 
+	.landing-top-image-block {
+		margin-top: 12px;
+		padding: 0 14px;
+	}
+
+	.landing-hero-image-top {
+		height: 130px;
+	}
+
+	.landing-hero-image-bottom {
+		height: 170px;
+	}
+
 	.landing-header {
 		align-items: flex-start;
 		flex-direction: column;
+	}
+
+	.landing-hero {
+		padding: 0 0 28px;
+	}
+
+	.landing-bottom-image-block {
+		max-width: 100%;
 	}
 
 	.landing-nav {
