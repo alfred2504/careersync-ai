@@ -122,7 +122,12 @@ export default function AIAssistant() {
         <div className="page-frame">
           <div className="page-hero">
             <span className="section-chip">AI Assistant</span>
-            <h1 className="page-title">CareerSync AI</h1>
+            <h1 className="page-title page-title-brand">
+              <span className="brand-with-icon">
+                <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+                <span>CareerSync AI</span>
+              </span>
+            </h1>
             <p className="page-subtitle">
               Get AI-powered assistance for your career needs. Analyze CVs, write cover letters,
               and create job descriptions.

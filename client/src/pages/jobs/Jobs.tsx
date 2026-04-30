@@ -129,7 +129,12 @@ export default function Jobs() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <span className="section-chip">Open roles</span>
-              <h1 className="page-title">Apply with a CV that feels polished, not rushed.</h1>
+              <h1 className="page-title page-title-brand">
+                <span className="brand-with-icon">
+                  <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+                  <span>CareerSync AI</span>
+                </span>
+              </h1>
               <p className="page-subtitle">
                 Review the role details, share a short note, and submit your CV in one clean step.
               </p>

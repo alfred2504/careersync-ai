@@ -29,7 +29,12 @@ export default function CreateJob() {
       <div className="page-frame">
         <section className="page-hero">
           <span className="section-chip">Hiring</span>
-          <h1 className="page-title">Publish a role with a clean, professional flow.</h1>
+          <h1 className="page-title page-title-brand">
+            <span className="brand-with-icon">
+              <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+              <span>CareerSync AI</span>
+            </span>
+          </h1>
           <p className="page-subtitle">
             Keep the form simple for recruiters while presenting the job in a polished format.
           </p>

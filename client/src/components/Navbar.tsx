@@ -55,7 +55,10 @@ export default function Navbar() {
     <header className="app-navbar">
       <div className="navbar-brand-group">
         <Link to="/dashboard" className="navbar-brand">
-          CareerSync AI
+          <span className="brand-with-icon">
+            <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+            <span>CareerSync AI</span>
+          </span>
         </Link>
         <span className="navbar-tag">Professional hiring workspace</span>
       </div>
@@ -68,8 +71,8 @@ export default function Navbar() {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-        <button type="submit" className="navbar-search-button">
-          Search
+        <button type="submit" className="navbar-search-button" aria-label="Search jobs">
+          🔍
         </button>
       </form>
 

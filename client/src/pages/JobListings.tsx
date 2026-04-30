@@ -81,7 +81,12 @@ export default function JobListings() {
   return (
     <div className="jobs-page">
       <div className="jobs-header">
-        <h1 className="jobs-title">Job Listings</h1>
+        <h1 className="jobs-title">
+          <span className="brand-with-icon">
+            <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+            <span>CareerSync AI</span>
+          </span>
+        </h1>
         <p className="jobs-subtitle">Find opportunities tailored for the Zimbabwe market.</p>
       </div>
 

@@ -52,7 +52,12 @@ export default function Dashboard() {
       <div className="page-frame">
         <section className="page-hero">
           <span className="section-chip">Workspace</span>
-          <h1 className="page-title">Welcome, {user.name}</h1>
+          <h1 className="page-title page-title-brand">
+            <span className="brand-with-icon">
+              <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+              <span>CareerSync AI</span>
+            </span>
+          </h1>
           <p className="page-subtitle">{user.email}</p>
           <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
             Role: {normalizedRole || "user"}

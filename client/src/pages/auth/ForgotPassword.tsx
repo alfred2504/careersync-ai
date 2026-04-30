@@ -30,6 +30,12 @@ export default function ForgotPassword() {
 
   return (
     <div className="register-page">
+      <header className="auth-header">
+        <div className="auth-brand">
+          <img src="/logo.png" alt="" aria-hidden="true" className="auth-brand-icon" />
+          <span>CareerSync AI</span>
+        </div>
+      </header>
       <form onSubmit={handleSubmit} className="register-card">
         <h2 className="register-title">Forgot Password</h2>
 

@@ -30,7 +30,12 @@ export default function Landing() {
       <div className="landing-bg-orb landing-bg-orb-two" />
 
       <header className="landing-header">
-        <p className="landing-brand">CareerSync AI</p>
+        <p className="landing-brand">
+          <span className="brand-with-icon">
+            <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
+            <span>CareerSync AI</span>
+          </span>
+        </p>
         <nav className="landing-nav">
           <Link to="/login" className="landing-nav-link">
             Login
