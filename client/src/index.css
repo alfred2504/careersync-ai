@@ -587,6 +587,11 @@ body.dark-theme .application-email {
 	color: #15803d;
 }
 
+.application-status-approved {
+	background: rgba(34, 197, 94, 0.14);
+	color: #15803d;
+}
+
 .application-status-rejected {
 	background: rgba(239, 68, 68, 0.12);
 	color: #b91c1c;
@@ -597,6 +602,10 @@ body.dark-theme .application-status-pending {
 }
 
 body.dark-theme .application-status-accepted {
+	color: #86efac;
+}
+
+body.dark-theme .application-status-approved {
 	color: #86efac;
 }
 
@@ -2031,6 +2040,20 @@ body.dark-theme .ai-textarea:focus {
 	margin-top: 12px;
 	color: #ef4444;
 	font-weight: 600;
+}
+
+.admin-action-error {
+	margin: 16px 28px 0;
+	padding: 12px 14px;
+	border-radius: 14px;
+	background: rgba(239, 68, 68, 0.12);
+	color: #b91c1c;
+	font-weight: 700;
+}
+
+body.dark-theme .admin-action-error {
+	background: rgba(239, 68, 68, 0.16);
+	color: #fca5a5;
 }
 
 .dashboard-layout {
