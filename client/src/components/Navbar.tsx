@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 type User = {
   role?: string;
+  email?: string;
 };
 
 export default function Navbar() {
@@ -23,7 +24,19 @@ export default function Navbar() {
     }
   };
 
+  const getStoredEmail = () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) return "";
+      const parsed: User = JSON.parse(storedUser);
+      return typeof parsed?.email === "string" ? parsed.email.toLowerCase() : "";
+    } catch {
+      return "";
+    }
+  };
+
   const isAdmin = getStoredRole() === "admin";
+  const canManageInvites = getStoredEmail() === "alfredmakura6@gmail.com";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -109,6 +122,11 @@ export default function Navbar() {
         {isAdmin && (
           <Link to="/admin/jobs" className="navbar-link" onClick={handleNavClick}>
             Admin Panel
+          </Link>
+        )}
+        {canManageInvites && (
+          <Link to="/admin/invites" className="navbar-link" onClick={handleNavClick}>
+            Admin Invites
           </Link>
         )}
       </nav>

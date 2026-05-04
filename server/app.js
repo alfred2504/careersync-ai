@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
+import adminInviteRoutes from "./routes/adminInviteRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/auth", requireDatabase, authRoutes);
 app.use("/api/user", requireDatabase, userRoutes);
 app.use("/api/jobs", requireDatabase, jobRoutes);
 app.use("/api/applications", requireDatabase, applicationRoutes);
+app.use("/api/admin", requireDatabase, adminInviteRoutes);
 app.use("/api/ai", requireDatabase, aiRoutes);
 
 export default app;

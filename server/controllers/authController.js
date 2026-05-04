@@ -1,29 +1,100 @@
 import User from "../models/User.js";
+import AdminInvite from "../models/AdminInvite.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { isSuperAdminEmail, normalizeEmail } from "../config/adminAccess.js";
+
+const promoteSuperAdmin = async (user) => {
+  if (isSuperAdminEmail(user.email) && user.role !== "admin") {
+    user.role = "admin";
+    await user.save();
+  }
+
+  return user;
+};
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, inviteToken } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     // check if user exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
+
+    const isSuperAdmin = isSuperAdminEmail(normalizedEmail);
+    let adminInvite = null;
+
+    if (!isSuperAdmin && inviteToken) {
+      adminInvite = await AdminInvite.findOne({
+        token: inviteToken,
+        email: normalizedEmail,
+        usedAt: null,
+      });
+
+      if (!adminInvite || adminInvite.expiresAt < new Date()) {
+        return res.status(403).json({ message: "Invalid or expired admin invite" });
+      }
+    }
+
+    if (!isSuperAdmin && role === "admin" && !adminInvite) {
+      return res.status(403).json({ message: "Admin registration requires an invite" });
+    }
+
     if (userExists) {
+      if (adminInvite) {
+        userExists.role = "admin";
+
+        if (typeof name === "string" && name.trim()) {
+          userExists.name = name.trim();
+        }
+
+        await userExists.save();
+
+        adminInvite.usedAt = new Date();
+        adminInvite.acceptedBy = userExists._id;
+        await adminInvite.save();
+
+        const token = jwt.sign(
+          { id: userExists._id, email: userExists.email },
+          process.env.JWT_SECRET || "supersecret",
+          { expiresIn: "7d" }
+        );
+
+        return res.status(200).json({
+          message: "Admin invite accepted",
+          token,
+          user: {
+            id: userExists._id,
+            name: userExists.name,
+            email: userExists.email,
+            role: userExists.role,
+          },
+        });
+      }
+
       return res.status(400).json({ message: "User already exists" });
     }
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userRole = role === "admin" ? "admin" : "user";
+    const userRole = isSuperAdmin || adminInvite ? "admin" : "user";
 
     // create user
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
       role: userRole,
     });
+
+    if (adminInvite) {
+      adminInvite.usedAt = new Date();
+      adminInvite.acceptedBy = user._id;
+      await adminInvite.save();
+    }
+
+    await promoteSuperAdmin(user);
 
     // generate token
     const token = jwt.sign(
@@ -51,6 +122,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = normalizeEmail(email);
 
     // validate input
     if (!email || !password) {
@@ -58,7 +130,7 @@ export const login = async (req, res) => {
     }
 
     // find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -68,6 +140,8 @@ export const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
+
+    await promoteSuperAdmin(user);
 
     // generate token
     const token = jwt.sign(

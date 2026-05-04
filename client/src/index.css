@@ -998,7 +998,7 @@ body.dark-theme .info-text {
 .theme-toggle {
 	position: fixed;
 	top: 18px;
-	right: 200px;
+	right: 152px;
 	z-index: 40;
 	border: 1px solid var(--toggle-border);
 	background: var(--toggle-bg);
@@ -1052,7 +1052,7 @@ body.dark-theme .info-text {
 @media (max-width: 640px) {
 	.theme-toggle {
 		top: 12px;
-		right: 12px;
+		right: 72px;
 	}
 
 	.register-page {

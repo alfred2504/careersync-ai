@@ -1,12 +1,12 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 
 type RegisterForm = {
   name: string;
   email: string;
   password: string;
-  role: "jobSeeker" | "jobPoster" | "admin";
+  role: "jobSeeker" | "jobPoster";
 };
 
 type ErrorResponseShape = {
@@ -19,12 +19,28 @@ type ErrorResponseShape = {
 
 export default function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState<RegisterForm>({
     name: "",
     email: "",
     password: "",
     role: "jobSeeker",
   });
+  const [inviteToken, setInviteToken] = useState("");
+  const [inviteLocked, setInviteLocked] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("invite") || "";
+    const email = params.get("email") || "";
+
+    setInviteToken(token);
+    setInviteLocked(Boolean(token && email));
+
+    if (email) {
+      setForm((current) => ({ ...current, email }));
+    }
+  }, [location.search]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,7 +56,7 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const data = await registerUser(form);
+      const data = await registerUser({ ...form, inviteToken });
       alert(data.message);
       navigate("/login");
     } catch (err: unknown) {
@@ -72,6 +88,8 @@ export default function Register() {
           placeholder="Email"
           className="register-input"
           onChange={handleChange}
+          value={form.email}
+          readOnly={inviteLocked}
         />
 
         <input
@@ -92,8 +110,13 @@ export default function Register() {
         >
           <option value="jobSeeker">Job Seeker</option>
           <option value="jobPoster">Job Poster</option>
-          <option value="admin">Admin</option>
         </select>
+
+        {inviteToken && (
+          <p className="info-copy">
+            This invite will grant admin panel access after registration.
+          </p>
+        )}
 
         <button className="register-button">
           Register

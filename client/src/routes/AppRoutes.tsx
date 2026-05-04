@@ -12,6 +12,7 @@ import Jobs from "../pages/jobs/Jobs";
 import AIAssistant from "../pages/AIAssistant";
 import JobApplications from "../pages/jobs/JobApplications";
 import AdminJobs from "../pages/admin/AdminJobs";
+import AdminInvites from "../pages/admin/AdminInvites";
 import JobListings from "../pages/JobListings";
 
 export default function AppRoutes() {
@@ -37,6 +38,7 @@ export default function AppRoutes() {
           <Route path="/post-job" element={<CreateJob />} />
           <Route path="/job/:jobId/applications" element={<JobApplications />} />
           <Route path="/admin/jobs" element={<AdminJobs />} />
+          <Route path="/admin/invites" element={<AdminInvites />} />
           <Route path="/ai" element={<AIAssistant />} />
         </Route>
       </Routes>

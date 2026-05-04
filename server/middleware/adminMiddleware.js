@@ -1,8 +1,8 @@
-import User from "../models/User.js";
+import { isSuperAdminEmail } from "../config/adminAccess.js";
 
 export const isAdmin = async (req, res, next) => {
   try {
-    if (req.user?.role !== "admin") {
+    if (req.user?.role !== "admin" && !isSuperAdminEmail(req.user?.email)) {
       return res.status(403).json({ message: "Admin access required" });
     }
     next();
