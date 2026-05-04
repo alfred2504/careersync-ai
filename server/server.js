@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
+import { requireDatabase } from "./middleware/databaseMiddleware.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -32,11 +33,11 @@ app.use(express.json());
 app.use("/uploads", express.static(uploadsDir));
 
 // routes
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/jobs", jobRoutes);
-app.use("/api/applications", applicationRoutes);
-app.use("/api/ai", aiRoutes);
+app.use("/api/auth", requireDatabase, authRoutes);
+app.use("/api/user", requireDatabase, userRoutes);
+app.use("/api/jobs", requireDatabase, jobRoutes);
+app.use("/api/applications", requireDatabase, applicationRoutes);
+app.use("/api/ai", requireDatabase, aiRoutes);
 
 if (fs.existsSync(clientDistDir)) {
   app.use(express.static(clientDistDir));

@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 
+let databaseConnected = false;
+
+export const isDatabaseConnected = () => databaseConnected;
+
 const connectDB = async () => {
   try {
     if (!process.env.MONGODB_URI) {
@@ -7,8 +11,10 @@ const connectDB = async () => {
     }
 
     const conn = await mongoose.connect(process.env.MONGODB_URI);
+    databaseConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
+    databaseConnected = false;
     console.warn("Database connection failed:", error.message);
 
     if (error.name) {
