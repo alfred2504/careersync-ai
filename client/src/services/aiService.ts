@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api";
+import API from "./api.js";
 
 const getToken = () => {
   return localStorage.getItem("token");
 };
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: `${API}/ai`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,7 +26,7 @@ export const analyzeCV = async (
   jobDescription = ""
 ): Promise<any> => {
   try {
-    const response = await apiClient.post("/ai/analyze-cv", {
+    const response = await apiClient.post("/analyze-cv", {
       cvText,
       jobDescription,
     });
@@ -47,7 +47,7 @@ export const generateCoverLetter = async (
   tone = "professional"
 ): Promise<any> => {
   try {
-    const response = await apiClient.post("/ai/generate-cover-letter", {
+    const response = await apiClient.post("/generate-cover-letter", {
       jobTitle,
       companyName,
       jobDescription,
@@ -71,7 +71,7 @@ export const generateJobDescription = async (
   keyResponsibilities = ""
 ): Promise<any> => {
   try {
-    const response = await apiClient.post("/ai/generate-job-description", {
+    const response = await apiClient.post("/generate-job-description", {
       jobTitle,
       companyName,
       department,

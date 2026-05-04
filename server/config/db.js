@@ -10,6 +10,11 @@ const connectDB = async () => {
       throw new Error("MONGODB_URI is not set in the environment.");
     }
 
+    if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
+      databaseConnected = true;
+      return mongoose.connection;
+    }
+
     const conn = await mongoose.connect(process.env.MONGODB_URI);
     databaseConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
