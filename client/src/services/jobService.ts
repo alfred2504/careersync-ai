@@ -46,3 +46,13 @@ export const getJobById = async (jobId: string) => {
   const { data } = await jobClient.get<Job>(`/jobs/${jobId}`);
   return data;
 };
+
+export const getAllJobs = async () => {
+  const { data } = await jobClient.get<Job[]>("/jobs/admin/all");
+  return data;
+};
+
+export const updateJobStatus = async (jobId: string, status: string) => {
+  const { data } = await jobClient.put(`/jobs/${jobId}/status`, { status });
+  return data;
+};

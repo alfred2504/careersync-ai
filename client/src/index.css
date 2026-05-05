@@ -768,6 +768,292 @@ p {
   gap: 1rem;
 }
 
+.page-shell {
+  background: #fff;
+}
+
+.section-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.9rem;
+}
+
+.page-hero {
+  padding: 4rem 0;
+  background: linear-gradient(180deg, #0f1111 0%, #171a1a 100%);
+  color: #fff;
+}
+
+.page-hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.page-hero p {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 620px;
+}
+
+.hero-panel-image,
+.trust-block,
+.map-placeholder {
+  background: linear-gradient(135deg, rgba(26, 188, 156, 0.24), rgba(0, 0, 0, 0.12)),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #d8ccc4 0%, #7b6d66 100%);
+  border-radius: 24px;
+  min-height: 280px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16);
+}
+
+.trust-block-large {
+  min-height: 340px;
+}
+
+.trust-block-small {
+  min-height: 160px;
+}
+
+.trust-block-alt {
+  background: linear-gradient(135deg, rgba(26, 188, 156, 0.18), rgba(0, 0, 0, 0.12)),
+    linear-gradient(135deg, #d7d5c9 0%, #9aa08f 100%);
+}
+
+.trust-block-wide {
+  min-height: 380px;
+}
+
+.faq-section,
+.news-section,
+.how-it-works-section,
+.map-section,
+.trust-section {
+  padding: 4rem 0;
+  background: #fff;
+}
+
+.faq-layout,
+.trust-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.faq-list details {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  background: #f8fbfa;
+}
+
+.faq-list summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.faq-list p {
+  margin-top: 0.7rem;
+}
+
+.trust-grid {
+  align-items: center;
+}
+
+.trust-grid-reverse {
+  grid-template-columns: 1.05fr 0.95fr;
+}
+
+.trust-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.trust-gallery-wide {
+  grid-template-columns: 1fr;
+}
+
+.trust-copy h2,
+.faq-layout h2,
+.news-section h2,
+.how-it-works-section h2,
+.contact-card h2,
+.map-card-copy h2 {
+  font-size: 2rem;
+  margin-bottom: 0.7rem;
+}
+
+.trust-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.trust-points span,
+.news-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  background: rgba(26, 188, 156, 0.1);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.steps-grid,
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.news-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.step-card,
+.news-card,
+.contact-card,
+.map-card {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 1.25rem;
+  background: #fff;
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.05);
+}
+
+.step-card span {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(26, 188, 156, 0.12);
+  color: var(--primary-dark);
+  font-weight: 800;
+  margin-bottom: 0.85rem;
+}
+
+.news-card {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.news-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 17, 17, 0.15), rgba(13, 17, 17, 0.82));
+}
+
+.news-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.news-card-featured {
+  background: linear-gradient(135deg, rgba(48, 34, 34, 0.45), rgba(17, 17, 17, 0.1)),
+    linear-gradient(135deg, #9f8f86 0%, #473b37 100%);
+}
+
+.news-card-secondary {
+  background: linear-gradient(135deg, rgba(26, 188, 156, 0.18), rgba(0, 0, 0, 0.06)),
+    linear-gradient(135deg, #9fa4a6 0%, #3d3d3d 100%);
+}
+
+.news-card h3 {
+  font-size: 1.1rem;
+  margin: 0.9rem 0 0.55rem;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-weight: 700;
+  width: fit-content;
+  padding: 0;
+  cursor: pointer;
+}
+
+.contact-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.contact-summary > div {
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.contact-summary span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.contact-summary strong a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.contact-card {
+  background: #eef8f6;
+}
+
+.contact-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.map-card {
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.map-placeholder {
+  min-height: 280px;
+  background: linear-gradient(135deg, #e4ece8 0%, #c9d7d0 100%);
+}
+
+.about-trust {
+  background: #f8fbfa;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 /* Job Details Page */
 .job-details-page {
   padding-top: 2rem;
@@ -1119,5 +1405,21 @@ p {
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .page-hero-grid,
+  .faq-layout,
+  .trust-grid,
+  .trust-grid-reverse,
+  .map-card,
+  .contact-row,
+  .contact-summary,
+  .steps-grid,
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-gallery {
+    grid-template-columns: 1fr;
   }
 }

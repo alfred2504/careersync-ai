@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getJobs, type Job } from "../services/jobService";
@@ -210,6 +211,89 @@ export default function Landing() {
           )}
         </div>
       </section>
+
+      <section className="faq-section">
+        <div className="container faq-layout">
+          <div>
+            <p className="section-kicker">Frequently asked questions</p>
+            <h2>Everything you need to know before applying</h2>
+            <p>
+              Quick answers about applications, recruitment timing, and how we keep your profile updated.
+            </p>
+          </div>
+
+          <div className="faq-list">
+            <details open>
+              <summary>Can I upload a CV?</summary>
+              <p>Yes. Upload any document that shows your experience, qualifications, or portfolio.</p>
+            </details>
+            <details>
+              <summary>How long does recruitment take?</summary>
+              <p>It depends on the employer, but most roles move from application to review in a few days.</p>
+            </details>
+            <details>
+              <summary>Do you recruit for graduates, apprentices, and students?</summary>
+              <p>Yes. We include entry-level, internship, apprenticeship, and graduate opportunities.</p>
+            </details>
+            <details>
+              <summary>Can I receive notifications for new jobs?</summary>
+              <p>Yes. Subscribe to updates and keep an eye on new roles published on the platform.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section className="trust-section">
+        <div className="container trust-grid">
+          <div className="trust-gallery">
+            <div className="trust-block trust-block-large" />
+            <div className="trust-block trust-block-small" />
+            <div className="trust-block trust-block-small trust-block-alt" />
+          </div>
+
+          <div className="trust-copy">
+            <p className="section-kicker">We’re only working with the best</p>
+            <h2>Trusted by quality employers and top talent</h2>
+            <p>
+              We focus on employers and candidates who value clear communication, practical hiring, and real career growth.
+            </p>
+            <div className="trust-points">
+              <span>Quality jobs</span>
+              <span>Resume builders</span>
+              <span>Top companies</span>
+              <span>Top talents</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="news-section">
+        <div className="container">
+          <div className="section-header">
+            <div>
+              <p className="section-kicker">News and blog</p>
+              <h2>Insights that help people move faster</h2>
+            </div>
+          </div>
+
+          <div className="news-grid">
+            <article className="news-card news-card-featured">
+              <div className="news-tag">News</div>
+              <h3>Revitalizing Workplace Morale: Innovative Tactics for Boosting Employee Engagement in 2024</h3>
+              <p>Fresh ideas for keeping teams active, informed, and productive in a changing work environment.</p>
+              <button className="link-button" type="button" onClick={() => navigate("/about")}>Read more</button>
+            </article>
+            <article className="news-card news-card-secondary">
+              <div className="news-tag">Blog</div>
+              <h3>How to avoid the top six most common job interview mistakes</h3>
+              <p>Simple guidance for candidates preparing for interviews and application screening.</p>
+              <button className="link-button" type="button" onClick={() => navigate("/contact")}>Read more</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }
