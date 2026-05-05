@@ -23,6 +23,8 @@ export type Job = {
   salaryRange?: string;
   experienceLevel?: string;
   tags?: string[];
+  responsibilities?: string[];
+  skills?: string[];
 };
 
 export type JobFilters = {
@@ -37,5 +39,10 @@ export const getJobs = async (filters: JobFilters = {}) => {
       location: filters.location || undefined,
     },
   });
+  return data;
+};
+
+export const getJobById = async (jobId: string) => {
+  const { data } = await jobClient.get<Job>(`/jobs/${jobId}`);
   return data;
 };

@@ -1,54 +1,61 @@
 import Navbar from "../components/Navbar";
-
-interface Job {
-  id: string;
-  posted: string;
-  title: string;
-  company: string;
-  category: string;
-  type: string;
-  salary: string;
-  location: string;
-  icon: string;
-}
-
-const RECENT_JOBS: Job[] = [
-  {
-    id: "1",
-    posted: "1 hr ago",
-    title: "Forward Security Director",
-    company: "Reach Software and Studios Co.",
-    category: "Human & Tourism",
-    type: "Full-time",
-    salary: "$40000-$45000",
-    location: "New York, USA",
-    icon: "🏢",
-  },
-  {
-    id: "2",
-    posted: "5 hrs ago",
-    title: "Regional Creative Facilitator",
-    company: "Metaos - Scratch Co.",
-    category: "Media",
-    type: "Part-time",
-    salary: "$30000-$35000",
-    location: "Los Angeles, USA",
-    icon: "🎨",
-  },
-  {
-    id: "3",
-    posted: "2 hrs ago",
-    title: "Internal Integration Planner",
-    company: "Mics, Quigley and Peroni Inc.",
-    category: "Consulting",
-    type: "Full-time",
-    salary: "$40000-$50000",
-    location: "Texas, USA",
-    icon: "📊",
-  },
-];
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getJobs, type Job } from "../services/jobService";
 
 export default function Landing() {
+  const navigate = useNavigate();
+  const [recentJobs, setRecentJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTitle, setSearchTitle] = useState("");
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        const jobs = await getJobs();
+        // Sort by most recent and take top 6
+        const sorted = jobs
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            return dateB - dateA;
+          })
+          .slice(0, 6);
+        setRecentJobs(sorted);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTitle.trim()) {
+      navigate(`/jobs?title=${encodeURIComponent(searchTitle)}`);
+    } else {
+      navigate("/jobs");
+    }
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "recently";
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffHours < 1) return "just now";
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
   return (
     <div>
       <Navbar />
@@ -61,42 +68,43 @@ export default function Landing() {
         </p>
 
         {/* Search Bar */}
-        <div className="search-bar">
+        <form className="search-bar" onSubmit={handleSearch}>
           <input
             type="text"
             placeholder="Job Title or Company"
             className="search-input"
+            value={searchTitle}
+            onChange={(e) => setSearchTitle(e.target.value)}
           />
-          <select className="search-select">
+          <select className="search-select" disabled>
             <option>Select Location</option>
-            <option>New York</option>
-            <option>Los Angeles</option>
-            <option>San Francisco</option>
           </select>
-          <select className="search-select">
+          <select className="search-select" disabled>
             <option>Select Category</option>
-            <option>Technology</option>
-            <option>Finance</option>
-            <option>Design</option>
           </select>
-          <button className="btn">Search Job</button>
-        </div>
+          <button type="submit" className="btn">
+            Search Job
+          </button>
+        </form>
+
 
         {/* Stats */}
         <div className="stats">
           <div className="stat-item">
             <div className="stat-icon">💼</div>
-            <div className="stat-number">25,860</div>
-            <div className="stat-label">Jobs</div>
+            <div className="stat-number">{recentJobs.length}+</div>
+            <div className="stat-label">Jobs Available</div>
           </div>
           <div className="stat-item">
             <div className="stat-icon">🏢</div>
-            <div className="stat-number">10,250</div>
-            <div className="stat-label">Companies</div>
+            <div className="stat-number">
+              {new Set(recentJobs.map((j) => j.company)).size}+
+            </div>
+            <div className="stat-label">Top Companies</div>
           </div>
           <div className="stat-item">
             <div className="stat-icon">👤</div>
-            <div className="stat-number">18,400</div>
+            <div className="stat-number">1000+</div>
             <div className="stat-label">Candidates</div>
           </div>
         </div>
@@ -106,11 +114,11 @@ export default function Landing() {
       <section className="companies">
         <p className="companies-title">Trusted by leading companies</p>
         <div className="companies-grid">
-          <div>Spotify</div>
-          <div>Slack</div>
-          <div>Adobe</div>
-          <div>Asana</div>
-          <div>Linear</div>
+          {Array.from(new Set(recentJobs.map((j) => j.company)))
+            .slice(0, 5)
+            .map((company) => (
+              <div key={company}>{company}</div>
+            ))}
         </div>
       </section>
 
@@ -125,51 +133,81 @@ export default function Landing() {
           </div>
 
           <p style={{ color: "var(--text-light)", marginBottom: "2rem" }}>
-            As an Jobsite platform Idealedcalt, email locat ist decent steat.
+            Explore the latest job opportunities from top companies. Find roles
+            that match your skills and aspirations.
           </p>
 
-          <div className="jobs-grid">
-            {RECENT_JOBS.map((job) => (
-              <div key={job.id} className="job-card">
-                <div className="job-card-posted">{job.posted}</div>
+          {loading ? (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "2rem",
+                color: "var(--text-light)",
+              }}
+            >
+              Loading recent jobs...
+            </div>
+          ) : recentJobs.length > 0 ? (
+            <div className="jobs-grid">
+              {recentJobs.map((job) => (
+                <div key={job._id} className="job-card">
+                  <div className="job-card-posted">
+                    {formatDate(job.createdAt)}
+                  </div>
 
-                <div className="job-card-header">
-                  <div className="job-company-icon">{job.icon}</div>
-                  <div className="job-card-info">
-                    <div className="job-card-title">{job.title}</div>
-                    <div className="job-card-company">{job.company}</div>
+                  <div className="job-card-header">
+                    <div className="job-company-icon">🏢</div>
+                    <div className="job-card-info">
+                      <div className="job-card-title">{job.title}</div>
+                      <div className="job-card-company">{job.company}</div>
+                    </div>
+                  </div>
+
+                  <div className="job-card-details">
+                    <div className="job-detail-item">
+                      <span className="job-detail-icon">📌</span>
+                      {job.category || "Uncategorized"}
+                    </div>
+                    <div className="job-detail-item">
+                      <span className="job-detail-icon">⏱️</span>
+                      {job.employmentType || "Not specified"}
+                    </div>
+                    <div className="job-detail-item">
+                      <span className="job-detail-icon">💰</span>
+                      {job.salaryRange || "Competitive"}
+                    </div>
+                    <div className="job-detail-item">
+                      <span className="job-detail-icon">📍</span>
+                      {job.location}
+                    </div>
+                  </div>
+
+                  <div className="job-card-footer">
+                    <div className="job-card-location">{job.location}</div>
+                    <div className="job-card-actions">
+                      <button className="job-bookmark">🔖</button>
+                      <button
+                        className="btn"
+                        onClick={() => navigate(`/job/${job._id}`)}
+                      >
+                        Job Details
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div className="job-card-details">
-                  <div className="job-detail-item">
-                    <span className="job-detail-icon">📌</span>
-                    {job.category}
-                  </div>
-                  <div className="job-detail-item">
-                    <span className="job-detail-icon">⏱️</span>
-                    {job.type}
-                  </div>
-                  <div className="job-detail-item">
-                    <span className="job-detail-icon">💰</span>
-                    {job.salary}
-                  </div>
-                  <div className="job-detail-item">
-                    <span className="job-detail-icon">📍</span>
-                    {job.location}
-                  </div>
-                </div>
-
-                <div className="job-card-footer">
-                  <div className="job-card-location">{job.location}</div>
-                  <div className="job-card-actions">
-                    <button className="job-bookmark">🔖</button>
-                    <button className="btn">Job Details</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "2rem",
+                color: "var(--text-light)",
+              }}
+            >
+              No jobs available at the moment. Check back soon!
+            </div>
+          )}
         </div>
       </section>
     </div>

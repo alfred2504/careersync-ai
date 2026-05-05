@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobs, type Job as JobItem } from "../services/jobService";
@@ -70,7 +71,6 @@ export default function Jobs() {
   const [error, setError] = useState("");
   const [titleQuery, setTitleQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
-  const [language, setLanguage] = useState("English");
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -173,15 +173,10 @@ export default function Jobs() {
         <main className="jobs-main">
           <div className="jobs-toolbar">
             <p>Showing {visibleJobs.length} jobs from database</p>
-            <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-              <select className="search-select jobs-sort">
-                <option>Sort by latest</option>
-                <option>Sort by oldest</option>
-              </select>
-              <select className="search-select jobs-sort" value={language} onChange={(event) => setLanguage(event.target.value)}>
-                <option value="English">English</option>
-              </select>
-            </div>
+            <select className="search-select jobs-sort">
+              <option>Sort by latest</option>
+              <option>Sort by oldest</option>
+            </select>
           </div>
 
           {error ? <p style={{ marginBottom: "1rem", color: "crimson" }}>{error}</p> : null}
@@ -217,9 +212,9 @@ export default function Jobs() {
                       ))}
                     </div>
                   </div>
-                  <button className="btn" type="button">
+                  <Link className="btn" to={`/jobs/${job._id}`}>
                     Job Details
-                  </button>
+                  </Link>
                 </div>
               ))
             )}

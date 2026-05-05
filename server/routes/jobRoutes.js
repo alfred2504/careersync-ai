@@ -18,6 +18,8 @@ router.post("/", protect, async (req, res) => {
       salaryRange,
       experienceLevel,
       tags,
+      responsibilities,
+      skills,
     } = req.body;
 
     if (!title || !company || !location || !description) {
@@ -34,6 +36,8 @@ router.post("/", protect, async (req, res) => {
       salaryRange,
       experienceLevel,
       tags,
+      responsibilities,
+      skills,
       createdBy: req.user._id,
     });
 
@@ -70,6 +74,21 @@ router.get("/", async (req, res) => {
     res.json(jobs);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch jobs" });
+  }
+});
+
+// ✅ GET SINGLE JOB (Public)
+router.get("/:id", async (req, res) => {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch job" });
   }
 });
 

@@ -11,6 +11,8 @@ const jobSchema = new mongoose.Schema(
     salaryRange: { type: String, default: "Negotiable" },
     experienceLevel: { type: String, default: "Any level" },
     tags: [{ type: String }],
+    responsibilities: [{ type: String }],
+    skills: [{ type: String }],
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
