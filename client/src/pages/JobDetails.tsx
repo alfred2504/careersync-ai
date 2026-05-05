@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobById, getJobs, type Job as JobItem } from "../services/jobService";
+import { applyForJob } from "../services/applicationService";
+import { sendJobMessage } from "../services/messageService";
+
 
 const formatPostedTime = (createdAt?: string) => {
   if (!createdAt) {
@@ -55,6 +59,33 @@ export default function JobDetails() {
   const [relatedJobs, setRelatedJobs] = useState<JobItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [applyCoverLetter, setApplyCoverLetter] = useState("");
+  const [applyCv, setApplyCv] = useState<File | null>(null);
+  const [applyStatus, setApplyStatus] = useState("");
+  const [applyError, setApplyError] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
+  const [messageName, setMessageName] = useState("");
+  const [messageEmail, setMessageEmail] = useState("");
+  const [messagePhone, setMessagePhone] = useState("");
+  const [messageBody, setMessageBody] = useState("");
+  const [messageStatus, setMessageStatus] = useState("");
+  const [messageError, setMessageError] = useState("");
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+
+  const overviewItems = useMemo(
+    () =>
+      job
+        ? [
+            { label: "Job Title", value: job.title },
+            { label: "Job Type", value: job.employmentType || "Full time" },
+            { label: "Category", value: job.category || "General" },
+            { label: "Experience", value: job.experienceLevel || "Any level" },
+            { label: "Offered Salary", value: formatMoney(job.salaryRange) },
+            { label: "Location", value: job.location },
+          ]
+        : [],
+    [job]
+  );
 
   useEffect(() => {
     const loadJob = async () => {
@@ -99,12 +130,86 @@ export default function JobDetails() {
 
   const tags = job?.tags?.length ? job.tags : [job?.employmentType || "Full time", job?.category || "General", job?.location || "Zimbabwe"];
 
+  const handleApplySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!job?._id) {
+      return;
+    }
+
+    try {
+      setIsApplying(true);
+      setApplyError("");
+      setApplyStatus("");
+
+      const response = await applyForJob({
+        jobId: job._id,
+        coverLetter: applyCoverLetter,
+        cv: applyCv,
+      });
+
+      setApplyStatus(response?.message || "Application submitted successfully");
+      setApplyCoverLetter("");
+      setApplyCv(null);
+    } catch (error) {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message || error.message || "Failed to submit application"
+        : error instanceof Error
+          ? error.message
+          : "Failed to submit application";
+      setApplyError(message);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleMessageSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!job?._id) {
+      return;
+    }
+
+    try {
+      setIsSendingMessage(true);
+      setMessageError("");
+      setMessageStatus("");
+
+      const response = await sendJobMessage({
+        jobId: job._id,
+        jobTitle: job.title,
+        name: messageName,
+        email: messageEmail,
+        phone: messagePhone,
+        message: messageBody,
+      });
+
+      setMessageStatus(response?.message || "Message sent successfully");
+      setMessageName("");
+      setMessageEmail("");
+      setMessagePhone("");
+      setMessageBody("");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to send message";
+      setMessageError(message);
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+
+  const handleCvChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setApplyCv(event.target.files?.[0] || null);
+  };
+
   return (
     <div className="jobs-page">
       <Navbar />
 
       <section className="jobs-hero">
         <div className="jobs-hero-inner">
+          <span className="job-details-breadcrumb">
+            <Link to="/jobs">Jobs</Link> / Job Details
+          </span>
           <h1>Job Details</h1>
         </div>
       </section>
@@ -122,15 +227,24 @@ export default function JobDetails() {
         ) : job ? (
           <div className="job-details-layout">
             <main className="job-details-main">
-              <span className="job-card-posted">{formatPostedTime(job.createdAt)}</span>
-              <h2 className="job-details-title">{job.title}</h2>
-              <p className="job-details-company">{job.company}</p>
+              <div className="job-details-header-card">
+                <span className="job-card-posted">{formatPostedTime(job.createdAt)}</span>
+                <div className="job-details-header-row">
+                  <div className="job-company-icon job-details-company-icon">
+                    {job.company.trim().charAt(0).toUpperCase() || "?"}
+                  </div>
+                  <div>
+                    <h2 className="job-details-title">{job.title}</h2>
+                    <p className="job-details-company">{job.company}</p>
+                  </div>
+                </div>
 
-              <div className="job-card-meta job-details-meta">
-                <span className="job-card-meta-chip">{job.category || "General"}</span>
-                <span className="job-card-meta-chip">{job.employmentType || "Full time"}</span>
-                <span className="job-card-meta-chip">{formatMoney(job.salaryRange)}</span>
-                <span className="job-card-meta-chip">{job.location}</span>
+                <div className="job-card-meta job-details-meta">
+                  <span className="job-card-meta-chip">{job.category || "General"}</span>
+                  <span className="job-card-meta-chip">{job.employmentType || "Full time"}</span>
+                  <span className="job-card-meta-chip">{formatMoney(job.salaryRange)}</span>
+                  <span className="job-card-meta-chip">{job.location}</span>
+                </div>
               </div>
 
               <section className="job-detail-block">
@@ -169,7 +283,7 @@ export default function JobDetails() {
 
               <section className="job-detail-block">
                 <h3>Share Job</h3>
-                <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                <div className="share-row">
                   <span className="job-card-meta-chip">Facebook</span>
                   <span className="job-card-meta-chip">X</span>
                   <span className="job-card-meta-chip">LinkedIn</span>
@@ -179,20 +293,39 @@ export default function JobDetails() {
 
             <aside className="job-details-sidebar">
               <div className="detail-card">
-                <button className="btn" type="button" style={{ width: "100%" }}>
-                  Apply Job
-                </button>
+                <h3>Apply Job</h3>
+                <form className="message-form" onSubmit={handleApplySubmit}>
+                  <input
+                    className="search-input"
+                    type="file"
+                    onChange={handleCvChange}
+                  />
+                  <textarea
+                    className="search-input message-area"
+                    placeholder="Write a short cover letter"
+                    value={applyCoverLetter}
+                    onChange={(event) => setApplyCoverLetter(event.target.value)}
+                  />
+                  <button className="btn" type="submit" disabled={isApplying}>
+                    {isApplying ? "Submitting..." : "Apply Job"}
+                  </button>
+                </form>
+                {applyStatus ? <p className="detail-card-note success-text">{applyStatus}</p> : null}
+                {applyError ? <p className="detail-card-note error-text">{applyError}</p> : null}
+                <p className="detail-card-note">
+                  Start your application using the latest job information from the database.
+                </p>
               </div>
 
               <div className="detail-card">
                 <h3>Job Overview</h3>
                 <ul className="overview-list">
-                  <li><span>Job Title</span><strong>{job.title}</strong></li>
-                  <li><span>Job Type</span><strong>{job.employmentType || "Full time"}</strong></li>
-                  <li><span>Category</span><strong>{job.category || "General"}</strong></li>
-                  <li><span>Experience</span><strong>{job.experienceLevel || "Any level"}</strong></li>
-                  <li><span>Offered Salary</span><strong>{formatMoney(job.salaryRange)}</strong></li>
-                  <li><span>Location</span><strong>{job.location}</strong></li>
+                  {overviewItems.map((item) => (
+                    <li key={item.label}>
+                      <span>{item.label}</span>
+                      <strong>{item.value}</strong>
+                    </li>
+                  ))}
                 </ul>
                 <div className="map-preview">
                   <div className="map-dot" />
@@ -202,15 +335,40 @@ export default function JobDetails() {
 
               <div className="detail-card">
                 <h3>Send Us Message</h3>
-                <form className="message-form">
-                  <input className="search-input" type="text" placeholder="Full name" />
-                  <input className="search-input" type="email" placeholder="Email Address" />
-                  <input className="search-input" type="text" placeholder="Phone Number" />
-                  <textarea className="search-input message-area" placeholder="Your Message" />
-                  <button className="btn" type="button">
-                    Send Message
+                <form className="message-form" onSubmit={handleMessageSubmit}>
+                  <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Full name"
+                    value={messageName}
+                    onChange={(event) => setMessageName(event.target.value)}
+                  />
+                  <input
+                    className="search-input"
+                    type="email"
+                    placeholder="Email Address"
+                    value={messageEmail}
+                    onChange={(event) => setMessageEmail(event.target.value)}
+                  />
+                  <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Phone Number"
+                    value={messagePhone}
+                    onChange={(event) => setMessagePhone(event.target.value)}
+                  />
+                  <textarea
+                    className="search-input message-area"
+                    placeholder="Your Message"
+                    value={messageBody}
+                    onChange={(event) => setMessageBody(event.target.value)}
+                  />
+                  <button className="btn" type="submit" disabled={isSendingMessage}>
+                    {isSendingMessage ? "Sending..." : "Send Message"}
                   </button>
                 </form>
+                {messageStatus ? <p className="detail-card-note success-text">{messageStatus}</p> : null}
+                {messageError ? <p className="detail-card-note error-text">{messageError}</p> : null}
               </div>
             </aside>
           </div>
@@ -221,24 +379,34 @@ export default function JobDetails() {
         <h2>Related Jobs</h2>
         <p>Jobs from the database that match the same company or location.</p>
 
-        <div className="jobs-list-placeholder">
+        <div className="related-jobs-grid">
           {relatedJobs.length > 0 ? (
             relatedJobs.map((relatedJob) => (
-              <div key={relatedJob._id} className="jobs-list-item">
-                <div>
-                  <span className="job-card-posted">{formatPostedTime(relatedJob.createdAt)}</span>
-                  <h3>{relatedJob.title}</h3>
-                  <p>{relatedJob.company}</p>
-                  <div className="job-card-meta">
-                    <span className="job-card-meta-chip">{relatedJob.category || "General"}</span>
-                    <span className="job-card-meta-chip">{relatedJob.employmentType || "Full time"}</span>
-                    <span className="job-card-meta-chip">{relatedJob.location}</span>
+              <article key={relatedJob._id} className="related-job-card">
+                <span className="job-card-posted">{formatPostedTime(relatedJob.createdAt)}</span>
+                <div className="job-card-header">
+                  <div className="job-company-icon">
+                    {relatedJob.company.trim().charAt(0).toUpperCase() || "?"}
+                  </div>
+                  <div className="job-card-info">
+                    <h3>{relatedJob.title}</h3>
+                    <p>{relatedJob.company}</p>
                   </div>
                 </div>
+                <div className="job-card-meta related-job-meta">
+                  <span className="job-card-meta-chip">{relatedJob.category || "General"}</span>
+                  <span className="job-card-meta-chip">{relatedJob.employmentType || "Full time"}</span>
+                  <span className="job-card-meta-chip">{relatedJob.location}</span>
+                </div>
+                <p className="related-job-snippet">
+                  {relatedJob.description.length > 110
+                    ? `${relatedJob.description.slice(0, 110)}...`
+                    : relatedJob.description}
+                </p>
                 <Link className="btn" to={`/jobs/${relatedJob._id}`}>
                   Job Details
                 </Link>
-              </div>
+              </article>
             ))
           ) : (
             <div className="jobs-list-item">

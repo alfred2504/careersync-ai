@@ -105,16 +105,37 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.navbar-brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+}
+
 .navbar-logo {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary);
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-left: auto;
 }
 
 .navbar-nav {
@@ -143,6 +164,39 @@ p {
   border-color: var(--primary);
   color: var(--primary);
 }
+
+.navbar-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  padding: 0.65rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.navbar-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.success-text {
+  color: #11835f;
+}
+
+.error-text {
+  color: #b42318;
+}
+
+
 
 /* Hero Section */
 .hero {
@@ -728,6 +782,46 @@ p {
   align-items: start;
 }
 
+.job-details-header-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fcfb 100%);
+  border: 1px solid rgba(26, 188, 156, 0.14);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.05);
+}
+
+.job-details-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 0.9rem;
+}
+
+.job-details-breadcrumb a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.job-details-breadcrumb a:hover {
+  color: var(--primary);
+}
+
+.job-details-header-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.job-details-company-icon {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(26, 188, 156, 0.14), rgba(26, 188, 156, 0.06));
+  color: var(--primary);
+}
+
 .job-details-main {
   min-width: 0;
 }
@@ -791,6 +885,12 @@ p {
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.detail-card-note {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  color: var(--text-light);
 }
 
 .detail-card h3 {
@@ -877,6 +977,43 @@ p {
   resize: vertical;
 }
 
+.share-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.related-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.related-job-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.05);
+  transition: all 0.3s ease;
+}
+
+.related-job-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(26, 188, 156, 0.38);
+  box-shadow: 0 14px 30px rgba(26, 188, 156, 0.12);
+}
+
+.related-job-meta {
+  margin: 1rem 0 0.85rem;
+}
+
+.related-job-snippet {
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
 .related-jobs-section {
   padding-top: 1rem;
   padding-bottom: 3rem;
@@ -901,8 +1038,42 @@ p {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .navbar-nav {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .navbar-toggle {
+    display: inline-flex;
+  }
+
+  .navbar-menu {
     display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem 0 0.25rem;
+    margin-left: 0;
+  }
+
+  .navbar-menu.is-open {
+    display: flex;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .navbar-auth {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .navbar-auth .btn,
+  .navbar-auth .btn-secondary {
+    width: 100%;
+    text-align: center;
   }
 
   .hero-title {
@@ -938,6 +1109,10 @@ p {
 
   .job-details-layout {
     grid-template-columns: 1fr;
+  }
+
+  .job-details-header-row {
+    align-items: center;
   }
 
   .jobs-toolbar,

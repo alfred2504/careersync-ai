@@ -27,19 +27,6 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
-  fileFilter: (_req, file, cb) => {
-    const allowedMimeTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      return cb(new Error("Only PDF, DOC, and DOCX files are allowed"));
-    }
-
-    cb(null, true);
-  },
 });
 
 const handleCvUpload = (req, res, next) => {
@@ -66,22 +53,27 @@ router.post("/", protect, handleCvUpload, async (req, res) => {
       user: req.user._id,
     });
 
-    if (existing) {
-      return res.status(400).json({ message: "Already applied" });
-    }
-
-    const application = await Application.create({
+    const applicationData = {
       job: jobId,
       user: req.user._id,
       coverLetter,
       cvUrl: req.file
         ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-        : undefined,
-      cvOriginalName: req.file?.originalname,
-    });
+        : existing?.cvUrl,
+      cvOriginalName: req.file?.originalname || existing?.cvOriginalName,
+    };
+
+    const application = existing
+      ? await Application.findByIdAndUpdate(existing._id, applicationData, {
+          new: true,
+          runValidators: true,
+        })
+      : await Application.create(applicationData);
 
     res.status(201).json({
-      message: "Application submitted successfully",
+      message: existing
+        ? "Application updated successfully"
+        : "Application submitted successfully",
       application,
     });
   } catch (error) {
