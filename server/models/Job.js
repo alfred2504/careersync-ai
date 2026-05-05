@@ -6,6 +6,11 @@ const jobSchema = new mongoose.Schema(
     company: { type: String, required: true },
     location: { type: String, required: true },
     description: { type: String, required: true },
+    category: { type: String, default: "General" },
+    employmentType: { type: String, default: "Full time" },
+    salaryRange: { type: String, default: "Negotiable" },
+    experienceLevel: { type: String, default: "Any level" },
+    tags: [{ type: String }],
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

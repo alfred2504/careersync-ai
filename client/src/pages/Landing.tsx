@@ -1,134 +1,177 @@
-import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
-const highlights = [
+interface Job {
+  id: string;
+  posted: string;
+  title: string;
+  company: string;
+  category: string;
+  type: string;
+  salary: string;
+  location: string;
+  icon: string;
+}
+
+const RECENT_JOBS: Job[] = [
   {
-    title: "AI-Smart Matching",
-    text: "CareerSync ranks opportunities by skills, role goals, and profile strength.",
-    image:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995", // AI image
+    id: "1",
+    posted: "1 hr ago",
+    title: "Forward Security Director",
+    company: "Reach Software and Studios Co.",
+    category: "Human & Tourism",
+    type: "Full-time",
+    salary: "$40000-$45000",
+    location: "New York, USA",
+    icon: "🏢",
   },
   {
-    title: "Fast Team Hiring",
-    text: "Post roles, review applicants, and manage status from one clean workflow.",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df", // employer laptop coffee
+    id: "2",
+    posted: "5 hrs ago",
+    title: "Regional Creative Facilitator",
+    company: "Metaos - Scratch Co.",
+    category: "Media",
+    type: "Part-time",
+    salary: "$30000-$35000",
+    location: "Los Angeles, USA",
+    icon: "🎨",
   },
   {
-    title: "Admin Oversight",
-    text: "Approve job posts and keep quality high with role-based moderation tools.",
-    image:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d", // team/admin vibe
+    id: "3",
+    posted: "2 hrs ago",
+    title: "Internal Integration Planner",
+    company: "Mics, Quigley and Peroni Inc.",
+    category: "Consulting",
+    type: "Full-time",
+    salary: "$40000-$50000",
+    location: "Texas, USA",
+    icon: "📊",
   },
 ];
 
 export default function Landing() {
-  const hasToken = Boolean(localStorage.getItem("token"));
-
   return (
-    <div className="landing-page">
-      <div className="landing-bg-orb landing-bg-orb-one" />
-      <div className="landing-bg-orb landing-bg-orb-two" />
+    <div>
+      <Navbar />
 
-      <header className="landing-header">
-        <p className="landing-brand">
-          <span className="brand-with-icon">
-            <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
-            <span>CareerSync AI</span>
-          </span>
+      {/* Hero Section */}
+      <section className="hero">
+        <h1 className="hero-title">Find Your Dream Job Today!</h1>
+        <p className="hero-subtitle">
+          Connecting Talent with Opportunity. Your Gateway to Career Success
         </p>
-        <nav className="landing-nav">
-          <Link to="/login" className="landing-nav-link">
-            Login
-          </Link>
-          <Link to="/register" className="landing-nav-link landing-nav-link-accent">
-            Register
-          </Link>
-        </nav>
-      </header>
 
-      <section className="landing-top-image-block" aria-label="CareerSync preview banner">
-        <img
-          src="https://images.unsplash.com/photo-1492724441997-5dc865305da7"
-          alt="Employer working on laptop with coffee"
-          className="landing-hero-image landing-hero-image-top"
-        />
+        {/* Search Bar */}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Job Title or Company"
+            className="search-input"
+          />
+          <select className="search-select">
+            <option>Select Location</option>
+            <option>New York</option>
+            <option>Los Angeles</option>
+            <option>San Francisco</option>
+          </select>
+          <select className="search-select">
+            <option>Select Category</option>
+            <option>Technology</option>
+            <option>Finance</option>
+            <option>Design</option>
+          </select>
+          <button className="btn">Search Job</button>
+        </div>
+
+        {/* Stats */}
+        <div className="stats">
+          <div className="stat-item">
+            <div className="stat-icon">💼</div>
+            <div className="stat-number">25,860</div>
+            <div className="stat-label">Jobs</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-icon">🏢</div>
+            <div className="stat-number">10,250</div>
+            <div className="stat-label">Companies</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-icon">👤</div>
+            <div className="stat-number">18,400</div>
+            <div className="stat-label">Candidates</div>
+          </div>
+        </div>
       </section>
 
-      <main className="landing-hero">
-        <section className="landing-copy">
-          <p className="landing-kicker">Career platform for modern teams</p>
-          <h1 className="landing-title">Find the right role. Hire the right talent.</h1>
-          <p className="landing-subtitle">
-            CareerSync AI connects job seekers, recruiters, and admins in one system built for speed,
-            quality, and clean decision-making.
+      {/* Companies Section */}
+      <section className="companies">
+        <p className="companies-title">Trusted by leading companies</p>
+        <div className="companies-grid">
+          <div>Spotify</div>
+          <div>Slack</div>
+          <div>Adobe</div>
+          <div>Asana</div>
+          <div>Linear</div>
+        </div>
+      </section>
+
+      {/* Recent Jobs Section */}
+      <section className="recent-jobs">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">Recent Jobs Available</h2>
+            <a href="/jobs" className="view-all">
+              View all →
+            </a>
+          </div>
+
+          <p style={{ color: "var(--text-light)", marginBottom: "2rem" }}>
+            As an Jobsite platform Idealedcalt, email locat ist decent steat.
           </p>
 
-          <div className="landing-cta-row">
-            <Link to={hasToken ? "/dashboard" : "/login"} className="landing-cta-primary">
-              {hasToken ? "Go to Dashboard" : "Get Started"}
-            </Link>
-            <Link to="/jobs" className="landing-cta-secondary">
-              Explore Jobs
-            </Link>
+          <div className="jobs-grid">
+            {RECENT_JOBS.map((job) => (
+              <div key={job.id} className="job-card">
+                <div className="job-card-posted">{job.posted}</div>
+
+                <div className="job-card-header">
+                  <div className="job-company-icon">{job.icon}</div>
+                  <div className="job-card-info">
+                    <div className="job-card-title">{job.title}</div>
+                    <div className="job-card-company">{job.company}</div>
+                  </div>
+                </div>
+
+                <div className="job-card-details">
+                  <div className="job-detail-item">
+                    <span className="job-detail-icon">📌</span>
+                    {job.category}
+                  </div>
+                  <div className="job-detail-item">
+                    <span className="job-detail-icon">⏱️</span>
+                    {job.type}
+                  </div>
+                  <div className="job-detail-item">
+                    <span className="job-detail-icon">💰</span>
+                    {job.salary}
+                  </div>
+                  <div className="job-detail-item">
+                    <span className="job-detail-icon">📍</span>
+                    {job.location}
+                  </div>
+                </div>
+
+                <div className="job-card-footer">
+                  <div className="job-card-location">{job.location}</div>
+                  <div className="job-card-actions">
+                    <button className="job-bookmark">🔖</button>
+                    <button className="btn">Job Details</button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div className="landing-metric-row">
-            <article className="landing-metric-card">
-              <p className="landing-metric-value">1.2K+</p>
-              <p className="landing-metric-label">Active candidates</p>
-            </article>
-            <article className="landing-metric-card">
-              <p className="landing-metric-value">260+</p>
-              <p className="landing-metric-label">Open listings</p>
-            </article>
-            <article className="landing-metric-card">
-              <p className="landing-metric-value">94%</p>
-              <p className="landing-metric-label">Approval quality</p>
-            </article>
-          </div>
-
-          <div className="landing-bottom-image-block" aria-label="CareerSync candidate preview">
-            <img
-              src="/cv-preview.svg"
-              alt="Person holding CV"
-              className="landing-hero-image landing-hero-image-bottom"
-            />
-          </div>
-        </section>
-
-        <aside className="landing-visual-panel" aria-hidden="true">
-          <div className="landing-visual-shell">
-            <div className="landing-visual-topbar">
-              <span />
-              <span />
-              <span />
-            </div>
-
-            <div className="landing-visual-content">
-              {highlights.map((item) => (
-                <article key={item.title} className="landing-highlight-card">
-                  {/* ✅ IMAGE ADDED */}
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    style={{
-                      width: "100%",
-                      height: "120px",
-                      objectFit: "cover",
-                      borderRadius: "10px",
-                      marginBottom: "10px",
-                    }}
-                  />
-
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
-              ))}
-            </div>
-
-          </div>
-        </aside>
-      </main>
+        </div>
+      </section>
     </div>
   );
 }

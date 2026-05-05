@@ -8,7 +8,17 @@ const router = express.Router();
 // CREATE JOB (Protected)
 router.post("/", protect, async (req, res) => {
   try {
-    const { title, company, location, description } = req.body;
+    const {
+      title,
+      company,
+      location,
+      description,
+      category,
+      employmentType,
+      salaryRange,
+      experienceLevel,
+      tags,
+    } = req.body;
 
     if (!title || !company || !location || !description) {
       return res.status(400).json({ message: "All fields are required" });
@@ -19,6 +29,11 @@ router.post("/", protect, async (req, res) => {
       company,
       location,
       description,
+      category,
+      employmentType,
+      salaryRange,
+      experienceLevel,
+      tags,
       createdBy: req.user._id,
     });
 
@@ -34,7 +49,23 @@ router.post("/", protect, async (req, res) => {
 // ✅ GET ALL JOBS (Public)
 router.get("/", async (req, res) => {
   try {
-    const jobs = await Job.find().sort({ createdAt: -1 });
+    const { title, location } = req.query;
+
+    const filter = {};
+
+    if (title && typeof title === "string" && title.trim()) {
+      const searchTerm = title.trim();
+      filter.$or = [
+        { title: { $regex: searchTerm, $options: "i" } },
+        { company: { $regex: searchTerm, $options: "i" } },
+      ];
+    }
+
+    if (location && typeof location === "string" && location.trim()) {
+      filter.location = { $regex: location.trim(), $options: "i" };
+    }
+
+    const jobs = await Job.find(filter).sort({ createdAt: -1 });
 
     res.json(jobs);
   } catch (error) {

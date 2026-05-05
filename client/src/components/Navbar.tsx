@@ -1,139 +1,40 @@
-import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-type User = {
-  role?: string;
-  email?: string;
-};
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [search, setSearch] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const getStoredRole = () => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) return "";
-      const parsed: User = JSON.parse(storedUser);
-      return typeof parsed?.role === "string" ? parsed.role.toLowerCase() : "";
-    } catch {
-      return "";
-    }
-  };
-
-  const getStoredEmail = () => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) return "";
-      const parsed: User = JSON.parse(storedUser);
-      return typeof parsed?.email === "string" ? parsed.email.toLowerCase() : "";
-    } catch {
-      return "";
-    }
-  };
-
-  const isAdmin = getStoredRole() === "admin";
-  const canManageInvites = getStoredEmail() === "alfredmakura6@gmail.com";
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    setSearch(params.get("search") || "");
-  }, [location.search]);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const query = search.trim();
-
-    if (!query) {
-      navigate("/job-listings");
-      return;
-    }
-
-    navigate(`/job-listings?search=${encodeURIComponent(query)}`);
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
-  const handleNavClick = () => {
-    setMobileMenuOpen(false);
-  };
-
   return (
-    <header className="app-navbar">
-      <div className="navbar-brand-group">
-        <Link to="/dashboard" className="navbar-brand">
-          <span className="brand-with-icon">
-            <img src="/logo.png" alt="" aria-hidden="true" className="brand-icon" />
-            <span>CareerSync AI</span>
-          </span>
-        </Link>
-        <span className="navbar-tag">Professional hiring workspace</span>
-      </div>
-
-      <form className="navbar-search" onSubmit={handleSubmit}>
-        <input
-          type="search"
-          className="navbar-search-input"
-          placeholder="Search jobs by title, company, or keyword"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
+    <nav className="navbar">
+      <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.75rem", textDecoration: "none" }}>
+        <img
+          src="/logo.png"
+          alt="CareerSync AI"
+          style={{ width: "40px", height: "40px", borderRadius: "6px" }}
         />
-        <button type="submit" className="navbar-search-button" aria-label="Search jobs">
-          🔍
-        </button>
-      </form>
+        <div className="navbar-logo">CareerSync AI</div>
+      </Link>
 
-      <button
-        type="button"
-        className="navbar-hamburger"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span className="hamburger-line"></span>
-        <span className="hamburger-line"></span>
-        <span className="hamburger-line"></span>
-      </button>
+      <ul className="navbar-nav">
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/jobs">Jobs</Link>
+        </li>
+        <li>
+          <Link to="/about">About Us</Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact Us</Link>
+        </li>
+      </ul>
 
-      <nav
-        className={`navbar-links ${mobileMenuOpen ? "mobile-open" : ""}`}
-        aria-label="Primary navigation"
-      >
-        <Link to="/dashboard" className="navbar-link" onClick={handleNavClick}>
-          Dashboard
+      <div className="navbar-auth">
+        <Link to="/login" className="btn-secondary">
+          Login
         </Link>
-        <Link to="/job-listings" className="navbar-link" onClick={handleNavClick}>
-          Browse Jobs
+        <Link to="/register" className="btn">
+          Register
         </Link>
-        <Link to="/jobs" className="navbar-link" onClick={handleNavClick}>
-          Apply
-        </Link>
-        <Link to="/post-job" className="navbar-link" onClick={handleNavClick}>
-          Post Job
-        </Link>
-        <Link to="/ai" className="navbar-link" onClick={handleNavClick}>
-          AI Assistant
-        </Link>
-        {isAdmin && (
-          <Link to="/admin/jobs" className="navbar-link" onClick={handleNavClick}>
-            Admin Panel
-          </Link>
-        )}
-        {canManageInvites && (
-          <Link to="/admin/invites" className="navbar-link" onClick={handleNavClick}>
-            Admin Invites
-          </Link>
-        )}
-      </nav>
-
-      <button type="button" onClick={handleLogout} className="navbar-logout">
-        Logout
-      </button>
-    </header>
+      </div>
+    </nav>
   );
 }
