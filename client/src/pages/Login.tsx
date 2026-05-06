@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, saveAuthSession } from "../services/authService";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,55 +29,33 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", backgroundColor: "var(--bg-dark)" }}>
+    <div className="auth-shell">
       {/* Left Side - Logo & Branding */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem",
-          color: "white",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
+      <div className="auth-visual">
+        <div className="auth-brand">
           <img
             src="/logo.png"
             alt="Careersync AI"
-            style={{ width: "120px", height: "120px", marginBottom: "1rem" }}
+            className="auth-brand-logo"
           />
-          <h1 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "0.5rem" }}>
+          <h1>
             CareerSync AI
           </h1>
-          <p style={{ fontSize: "1.1rem", color: "rgba(255, 255, 255, 0.7)" }}>
+          <p>
             Your Gateway to Career Success
           </p>
         </div>
       </div>
 
       {/* Right Side - Form */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem",
-          backgroundColor: "white",
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: "100%",
-            maxWidth: "400px",
-          }}
-        >
-          <h2 style={{ marginBottom: "1rem", color: "var(--text-dark)" }}>Welcome Back</h2>
-          <p style={{ marginBottom: "2rem", color: "var(--text-light)" }}>
+      <div className="auth-panel">
+        <div className="auth-toggle-row">
+          <ThemeToggle />
+        </div>
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <h2>Welcome Back</h2>
+          <p>
             Sign in to your account to continue
           </p>
 

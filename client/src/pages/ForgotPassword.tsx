@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../services/authService";
+import ThemeToggle from "../components/ThemeToggle";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -41,53 +42,31 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", backgroundColor: "var(--bg-dark)" }}>
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem",
-          color: "white",
-          background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
+    <div className="auth-shell">
+      <div className="auth-visual">
+        <div className="auth-brand">
           <img
             src="/logo.png"
             alt="Careersync AI"
-            style={{ width: "120px", height: "120px", marginBottom: "1rem" }}
+            className="auth-brand-logo"
           />
-          <h1 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "0.5rem" }}>
+          <h1>
             CareerSync AI
           </h1>
-          <p style={{ fontSize: "1.1rem", color: "rgba(255, 255, 255, 0.7)" }}>
+          <p>
             Reset your password and continue
           </p>
         </div>
       </div>
 
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem",
-          backgroundColor: "white",
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: "100%",
-            maxWidth: "420px",
-          }}
-        >
-          <h2 style={{ marginBottom: "1rem", color: "var(--text-dark)" }}>Forgot Password</h2>
-          <p style={{ marginBottom: "2rem", color: "var(--text-light)" }}>
+      <div className="auth-panel">
+        <div className="auth-toggle-row auth-toggle-row-wide">
+          <ThemeToggle />
+        </div>
+
+        <form onSubmit={handleSubmit} className="auth-form auth-form-wide">
+          <h2>Forgot Password</h2>
+          <p>
             Enter your email and a new password to update your account.
           </p>
 

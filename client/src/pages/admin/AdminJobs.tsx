@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AdminLayout from "../../components/AdminLayout";
 import { getAllJobs, updateJobStatus } from "../../services/jobService";
 
 export default function AdminJobs() {
@@ -19,20 +20,40 @@ export default function AdminJobs() {
   };
 
   return (
-    <div>
-      <h2>Admin Jobs</h2>
-
-      {jobs.map((job) => (
-        <div key={job._id}>
-          <p>{job.title}</p>
-          <button onClick={() => handleStatus(job._id, "approved")}>
-            Approve
-          </button>
-          <button onClick={() => handleStatus(job._id, "rejected")}>
-            Reject
-          </button>
+    <AdminLayout>
+      <section className="admin-page-header">
+        <div>
+          <p className="section-kicker">Jobs</p>
+          <h1>Manage Jobs</h1>
+          <p>Review and moderate job posts.</p>
         </div>
-      ))}
-    </div>
+      </section>
+
+      <section className="admin-card admin-list-card">
+        {jobs.length > 0 ? (
+          jobs.map((job) => (
+            <article key={job._id} className="admin-list-item">
+              <div>
+                <h3>{job.title}</h3>
+                <p>{job.company}</p>
+              </div>
+              <div className="admin-list-actions">
+                <button className="btn-secondary" onClick={() => handleStatus(job._id, "approved")}>
+                  Approve
+                </button>
+                <button className="btn-secondary" onClick={() => handleStatus(job._id, "rejected")}>
+                  Reject
+                </button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="admin-empty-state">
+            <h3>No jobs yet</h3>
+            <p>Use the Post Job page to publish the first opening.</p>
+          </div>
+        )}
+      </section>
+    </AdminLayout>
   );
 }

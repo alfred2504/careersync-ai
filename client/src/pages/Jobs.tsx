@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobs, type Job as JobItem } from "../services/jobService";
+import { clearAuthSession, getAuthUser } from "../services/authService";
 
 const zimbabweCities = [
   "Harare",
@@ -66,11 +67,13 @@ const formatJobMetadata = (job: JobItem) => [
 ];
 
 export default function Jobs() {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<JobItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [titleQuery, setTitleQuery] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
+  const user = getAuthUser();
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -114,6 +117,11 @@ export default function Jobs() {
       })
       .slice(0, 4);
   }, [visibleJobs]);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    navigate("/login");
+  };
 
   return (
     <div className="jobs-page">
@@ -168,6 +176,16 @@ export default function Jobs() {
             <h3>WE ARE HIRING</h3>
             <p>Apply Today!</p>
           </div>
+
+          {user ? (
+            <div className="filter-card sidebar-action-card">
+              <h3>Account</h3>
+              <p>You're signed in as {user.name}.</p>
+              <button type="button" className="btn-secondary sidebar-logout" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          ) : null}
         </aside>
 
         <main className="jobs-main">

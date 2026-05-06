@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { getAuthUser } from "../services/authService";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const user = getAuthUser();
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -47,16 +50,27 @@ export default function Navbar() {
           <li>
             <Link to="/contact" onClick={closeMenu}>Contact Us</Link>
           </li>
+          {user?.role === "admin" ? (
+            <>
+              <li>
+                <Link to="/admin/jobs" onClick={closeMenu}>Admin</Link>
+              </li>
+              <li>
+                <Link to="/admin/jobs/new" onClick={closeMenu}>Post Job</Link>
+              </li>
+            </>
+          ) : null}
         </ul>
 
-        <div className="navbar-auth">
-          <Link to="/login" className="btn-secondary" onClick={closeMenu}>
-            Login
-          </Link>
-          <Link to="/register" className="btn" onClick={closeMenu}>
-            Register
-          </Link>
-        </div>
+          <div className="navbar-auth">
+            <ThemeToggle />
+            <Link to="/login" className="btn-secondary" onClick={closeMenu}>
+              Login
+            </Link>
+            <Link to="/register" className="btn" onClick={closeMenu}>
+              Register
+            </Link>
+          </div>
       </div>
     </nav>
   );
