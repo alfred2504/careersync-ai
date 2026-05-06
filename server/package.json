@@ -4,6 +4,9 @@
   "description": "Backend API for CareerSync AI (Express.js)",
   "main": "server.js",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "nodemon server.js",
     "build": "node -e \"console.log('No server build step required')\"",
