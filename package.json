@@ -27,6 +27,9 @@
   ],
   "author": "Alfred Makura",
   "license": "ISC",
+  "engines": {
+    "node": "18.x"
+  },
   "bugs": {
     "url": "https://github.com/alfred2504/careersync-ai/issues"
   },
