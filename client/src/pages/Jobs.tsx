@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getJobs, type Job as JobItem } from "../services/jobService";
 import { clearAuthSession, getAuthUser } from "../services/authService";
@@ -125,8 +124,7 @@ export default function Jobs() {
 
   return (
     <div className="jobs-page">
-      <Navbar />
-
+      
       <section className="jobs-hero">
         <div className="jobs-hero-inner">
           <h1>Jobs</h1>

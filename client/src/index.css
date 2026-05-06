@@ -799,6 +799,33 @@ p {
   gap: 1.25rem;
 }
 
+.site-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.04);
+}
+
+/* Job status badge */
+.job-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: white;
+}
+.job-status-pending {
+  background: #6b7280; /* gray */
+}
+.job-status-approved {
+  background: #16a34a; /* green */
+}
+.job-status-rejected {
+  background: #dc2626; /* red */
+}
+
 .company-card {
   background: var(--surface);
   border-radius: 12px;

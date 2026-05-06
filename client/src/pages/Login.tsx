@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, saveAuthSession } from "../services/authService";
-import ThemeToggle from "../components/ThemeToggle";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -49,9 +48,7 @@ export default function Login() {
 
       {/* Right Side - Form */}
       <div className="auth-panel">
-        <div className="auth-toggle-row">
-          <ThemeToggle />
-        </div>
+        <div className="auth-toggle-row" />
 
         <form onSubmit={handleSubmit} className="auth-form">
           <h2>Welcome Back</h2>

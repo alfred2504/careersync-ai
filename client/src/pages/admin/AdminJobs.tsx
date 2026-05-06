@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AdminLayout from "../../components/AdminLayout";
+// AdminLayout removed: global authenticated sidebar used instead
 import { getAllJobs, updateJobStatus } from "../../services/jobService";
 
 export default function AdminJobs() {
@@ -20,7 +20,7 @@ export default function AdminJobs() {
   };
 
   return (
-    <AdminLayout>
+    <div className="container" style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
       <section className="admin-page-header">
         <div>
           <p className="section-kicker">Jobs</p>
@@ -29,12 +29,15 @@ export default function AdminJobs() {
         </div>
       </section>
 
-      <section className="admin-card admin-list-card">
+      <section className="site-card">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <article key={job._id} className="admin-list-item">
+            <article key={job._id} className="jobs-list-item">
               <div>
-                <h3>{job.title}</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <h3 style={{ margin: 0 }}>{job.title}</h3>
+                  <span className={`job-status job-status-${(job.status || 'pending')}`}>{(job.status || 'pending').toUpperCase()}</span>
+                </div>
                 <p>{job.company}</p>
               </div>
               <div className="admin-list-actions">
@@ -54,6 +57,6 @@ export default function AdminJobs() {
           </div>
         )}
       </section>
-    </AdminLayout>
+    </div>
   );
 }

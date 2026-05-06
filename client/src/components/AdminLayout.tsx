@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { clearAuthSession, getAuthUser } from "../services/authService";
-import ThemeToggle from "./ThemeToggle";
+
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -24,7 +24,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <p className="section-kicker">Admin</p>
             <h2>CareerSync AI</h2>
           </div>
-          <ThemeToggle />
         </div>
 
         <div className="admin-sidebar-user">

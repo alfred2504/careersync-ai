@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import Navbar from "../components/Navbar";
+// Navbar rendered globally via AuthenticatedLayout
 import Footer from "../components/Footer";
 import { sendJobMessage } from "../services/messageService";
 
@@ -51,8 +51,6 @@ export default function Contact() {
 
   return (
     <div className="page-shell">
-      <Navbar />
-
       <section className="page-hero page-hero-contact">
         <div className="container page-hero-grid">
           <div>

@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { forgotPassword } from "../services/authService";
-import ThemeToggle from "../components/ThemeToggle";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -60,9 +59,7 @@ export default function ForgotPassword() {
       </div>
 
       <div className="auth-panel">
-        <div className="auth-toggle-row auth-toggle-row-wide">
-          <ThemeToggle />
-        </div>
+        <div className="auth-toggle-row auth-toggle-row-wide" />
 
         <form onSubmit={handleSubmit} className="auth-form auth-form-wide">
           <h2>Forgot Password</h2>

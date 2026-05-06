@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+// Navbar rendered globally via AuthenticatedLayout
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +59,6 @@ export default function Landing() {
 
   return (
     <div>
-      <Navbar />
 
       {/* Hero Section */}
       <section className="hero">

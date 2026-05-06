@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { registerUser, saveAuthSession } from "../services/authService";
-import ThemeToggle from "../components/ThemeToggle";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -90,9 +89,7 @@ export default function Register() {
 
       {/* Right Side - Form */}
       <div className="auth-panel">
-        <div className="auth-toggle-row">
-          <ThemeToggle />
-        </div>
+        <div className="auth-toggle-row" />
 
         <form onSubmit={handleSubmit} className="auth-form">
           <h2>Create Account</h2>

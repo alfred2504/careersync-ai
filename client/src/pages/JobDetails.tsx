@@ -1,7 +1,7 @@
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../components/Navbar";
+// Navbar rendered globally via AuthenticatedLayout
 import Footer from "../components/Footer";
 import { getJobById, getJobs, type Job as JobItem } from "../services/jobService";
 import { applyForJob } from "../services/applicationService";
@@ -203,8 +203,7 @@ export default function JobDetails() {
 
   return (
     <div className="jobs-page">
-      <Navbar />
-
+      
       <section className="jobs-hero">
         <div className="jobs-hero-inner">
           <span className="job-details-breadcrumb">

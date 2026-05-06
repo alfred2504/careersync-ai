@@ -1,11 +1,9 @@
-import Navbar from "../components/Navbar";
+// Navbar rendered globally via AuthenticatedLayout
 import Footer from "../components/Footer";
 
 export default function About() {
   return (
     <div className="page-shell">
-      <Navbar />
-
       <section className="page-hero page-hero-about">
         <div className="container page-hero-grid">
           <div>

@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import AdminLayout from "../../components/AdminLayout";
+// Using global authenticated sidebar instead of AdminLayout
 import { createJob } from "../../services/jobService";
 
 const emptyForm = {
@@ -68,7 +68,7 @@ export default function AdminPostJob() {
   };
 
   return (
-    <AdminLayout>
+    <div className="container" style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
       <section className="admin-page-header">
         <div>
           <p className="section-kicker">Jobs</p>
@@ -77,7 +77,7 @@ export default function AdminPostJob() {
         </div>
       </section>
 
-      <section className="admin-card admin-form-card">
+      <section className="site-card">
         <form className="admin-form" onSubmit={handleSubmit}>
           <div className="admin-form-grid">
             <label>
@@ -140,6 +140,6 @@ export default function AdminPostJob() {
           </div>
         </form>
       </section>
-    </AdminLayout>
+    </div>
   );
 }

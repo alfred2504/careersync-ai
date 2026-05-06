@@ -1,13 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { getAuthUser } from "../services/authService";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuthUser, clearAuthSession } from "../services/authService";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = getAuthUser();
+  const navigate = useNavigate();
 
   const closeMenu = () => setMenuOpen(false);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    closeMenu();
+    navigate('/login');
+  };
 
   return (
     <nav className="navbar">
@@ -64,12 +71,23 @@ export default function Navbar() {
 
           <div className="navbar-auth">
             <ThemeToggle />
-            <Link to="/login" className="btn-secondary" onClick={closeMenu}>
-              Login
-            </Link>
-            <Link to="/register" className="btn" onClick={closeMenu}>
-              Register
-            </Link>
+            {user ? (
+              <>
+                <span style={{ color: 'white', fontWeight: 600, marginRight: '0.5rem' }}>{user.name || user.email}</span>
+                <button type="button" className="btn-secondary" onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn-secondary" onClick={closeMenu}>
+                  Login
+                </Link>
+                <Link to="/register" className="btn" onClick={closeMenu}>
+                  Register
+                </Link>
+              </>
+            )}
           </div>
       </div>
     </nav>
