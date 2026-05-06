@@ -11,6 +11,7 @@ import jobRoutes from "./routes/jobRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import adminInviteRoutes from "./routes/adminInviteRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import cvRoutes from "./routes/cvRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/applications", requireDatabase, applicationRoutes);
 app.use("/api/messages", requireDatabase, messageRoutes);
 app.use("/api/admin", requireDatabase, adminInviteRoutes);
 app.use("/api/ai", requireDatabase, aiRoutes);
+app.use("/api/cv", requireDatabase, cvRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAuthToken } from "./authService";
 
 const API_ORIGIN = import.meta.env.VITE_API_URL || "";
 const API_BASE = API_ORIGIN ? `${API_ORIGIN.replace(/\/$/, "")}/api` : "/api";
@@ -48,11 +49,17 @@ export const getJobById = async (jobId: string) => {
 };
 
 export const getAllJobs = async () => {
-  const { data } = await jobClient.get<Job[]>("/jobs/admin/all");
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const { data } = await jobClient.get<Job[]>("/jobs/admin/all", { headers });
   return data;
 };
 
 export const updateJobStatus = async (jobId: string, status: string) => {
-  const { data } = await jobClient.put(`/jobs/${jobId}/status`, { status });
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const { data } = await jobClient.put(`/jobs/${jobId}/status`, { status }, { headers });
   return data;
 };

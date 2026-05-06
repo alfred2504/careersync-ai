@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { registerUser, saveAuthSession } from "../services/authService";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,6 +15,14 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const inviteToken = searchParams.get("inviteToken") || searchParams.get("token") || "";
+
+    if (inviteToken) {
+      setFormData((prev) => ({ ...prev, inviteToken, userType: "employer" }));
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -33,6 +42,12 @@ export default function Register() {
 
     try {
       const role = formData.userType === "employer" ? "admin" : "user";
+
+      if (role === "admin" && !formData.inviteToken) {
+        setError("Employer registration requires an invite link from your email.");
+        setLoading(false);
+        return;
+      }
 
       const response = await registerUser({
         name: formData.name,
@@ -103,7 +118,7 @@ export default function Register() {
         >
           <h2 style={{ marginBottom: "1rem", color: "var(--text-dark)" }}>Create Account</h2>
           <p style={{ marginBottom: "2rem", color: "var(--text-light)" }}>
-            Join thousands of job seekers and employers
+            Join thousands of job seekers and employers on CareerSync AI
           </p>
 
           {error ? (
@@ -155,7 +170,6 @@ export default function Register() {
             />
           </div>
 
-          {/* User Type */}
           <div style={{ marginBottom: "1.5rem" }}>
             <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
               I am a:
@@ -172,26 +186,16 @@ export default function Register() {
             </select>
             {formData.userType === "employer" ? (
               <p style={{ marginTop: "0.6rem", fontSize: "0.9rem", color: "var(--text-light)" }}>
-                Employer accounts require an invite token from the admin.
+                Employers can only register using the invite link sent to their email.
               </p>
             ) : null}
           </div>
 
-          {formData.userType === "employer" ? (
-            <div style={{ marginBottom: "1.5rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
-                Invite Token
-              </label>
-              <input
-                type="text"
-                name="inviteToken"
-                value={formData.inviteToken}
-                onChange={handleChange}
-                placeholder="Paste your invite token"
-                className="search-input"
-                style={{ width: "100%" }}
-              />
-            </div>
+          <input type="hidden" name="inviteToken" value={formData.inviteToken} />
+          {formData.inviteToken ? (
+            <p style={{ marginBottom: "1.5rem", fontSize: "0.9rem", color: "var(--text-light)" }}>
+              Invite link detected from your email. You can continue registration now.
+            </p>
           ) : null}
 
           {/* Password */}

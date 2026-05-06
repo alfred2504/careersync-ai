@@ -5,6 +5,12 @@ import { isSuperAdminEmail, normalizeEmail } from "../config/adminAccess.js";
 
 const INVITE_LIFETIME_MS = 1000 * 60 * 60 * 24 * 7;
 
+const buildInviteLink = (req, token) => {
+  const clientUrl = process.env.CLIENT_URL || req.headers.origin || "http://localhost:5173";
+  const normalizedBase = clientUrl.replace(/\/$/, "");
+  return `${normalizedBase}/register?inviteToken=${encodeURIComponent(token)}`;
+};
+
 export const createAdminInvite = async (req, res) => {
   try {
     const email = normalizeEmail(req.body?.email);
@@ -35,6 +41,7 @@ export const createAdminInvite = async (req, res) => {
         email: invite.email,
         name: invite.name,
         token: invite.token,
+        inviteLink: buildInviteLink(req, invite.token),
         expiresAt: invite.expiresAt,
         usedAt: invite.usedAt,
         createdAt: invite.createdAt,
@@ -60,6 +67,7 @@ export const listAdminInvites = async (req, res) => {
         email: invite.email,
         name: invite.name,
         token: invite.token,
+        inviteLink: buildInviteLink(req, invite.token),
         expiresAt: invite.expiresAt,
         usedAt: invite.usedAt,
         createdAt: invite.createdAt,

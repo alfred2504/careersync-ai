@@ -36,6 +36,12 @@ export type RegisterPayload = {
   inviteToken?: string;
 };
 
+export type ForgotPasswordPayload = {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
 const AUTH_TOKEN_KEY = "careersync_token";
 const AUTH_USER_KEY = "careersync_user";
 
@@ -46,6 +52,11 @@ export const loginUser = async (payload: LoginPayload) => {
 
 export const registerUser = async (payload: RegisterPayload) => {
   const { data } = await authClient.post<AuthResponse>("/auth/register", payload);
+  return data;
+};
+
+export const forgotPassword = async (payload: ForgotPasswordPayload) => {
+  const { data } = await authClient.post<{ message: string }>("/auth/forgot-password", payload);
   return data;
 };
 

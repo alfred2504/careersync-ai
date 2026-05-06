@@ -140,12 +140,23 @@ What We Offer:
 
 export const analyzeCV = async (req, res) => {
   try {
-    const openai = getOpenAIClient();
     const { cvText, jobDescription } = req.body;
 
     if (!cvText) {
       return res.status(400).json({ error: "CV text is required" });
     }
+
+    // If OpenAI key is missing or left as a placeholder, return a local fallback analysis
+    if (!process.env.OPENAI_API_KEY || String(process.env.OPENAI_API_KEY).includes('REDACTED')) {
+      console.warn("OPENAI_API_KEY not set or placeholder detected — returning local fallback analysis.");
+      return res.json({
+        success: true,
+        fallback: true,
+        analysis: buildCVFallback(cvText, jobDescription),
+      });
+    }
+
+    const openai = getOpenAIClient();
 
     const prompt = jobDescription
       ? `Analyze this CV in the context of the following job description and provide insights:
@@ -207,6 +218,60 @@ Please provide:
       error: error.message || "Failed to analyze CV",
     });
   }
+};
+
+// Reusable programmatic CV analysis helper (returns analysis string)
+export const analyzeCVContent = async (cvText, jobDescription) => {
+  if (!cvText) {
+    throw new Error("CV text is required");
+  }
+
+  if (!process.env.OPENAI_API_KEY || String(process.env.OPENAI_API_KEY).includes('REDACTED')) {
+    return buildCVFallback(cvText, jobDescription);
+  }
+
+  const openai = getOpenAIClient();
+
+  const prompt = jobDescription
+    ? `Analyze this CV in the context of the following job description and provide insights:
+
+Job Description:
+${jobDescription}
+
+CV Content:
+${cvText}
+
+Please provide:
+1. Key strengths relative to the job
+2. Gaps or areas to improve
+3. Specific recommendations for this role
+4. Match percentage (0-100%)
+5. Top 3 action items to strengthen the application`
+    : `Analyze this CV and provide comprehensive feedback:
+
+CV Content:
+${cvText}
+
+Please provide:
+1. Key strengths
+2. Areas for improvement
+3. Missing sections or information
+4. Specific recommendations to strengthen the CV
+5. Top 3 action items for improvement`;
+
+  const response = await openai.chat.completions.create({
+    model: OPENAI_MODEL,
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    max_tokens: 1500,
+    temperature: 0.7,
+  });
+
+  return response.choices[0].message.content;
 };
 
 export const generateCoverLetter = async (req, res) => {
