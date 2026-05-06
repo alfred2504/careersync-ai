@@ -32,4 +32,18 @@ app.use("/api/messages", requireDatabase, messageRoutes);
 app.use("/api/admin", requireDatabase, adminInviteRoutes);
 app.use("/api/ai", requireDatabase, aiRoutes);
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Global error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err : undefined,
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
+});
+
 export default app;
