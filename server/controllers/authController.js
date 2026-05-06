@@ -16,6 +16,13 @@ const promoteSuperAdmin = async (user) => {
 export const register = async (req, res) => {
   try {
     const { name, email, password, role, inviteToken } = req.body;
+
+    // Basic input validation with clear messages
+    if (!name || !email || !password) {
+      console.warn("Register validation failed - missing fields:", { name, email, password: !!password });
+      return res.status(400).json({ message: "Name, email and password are required" });
+    }
+
     const normalizedEmail = normalizeEmail(email);
 
     // check if user exists
@@ -41,6 +48,7 @@ export const register = async (req, res) => {
     }
 
     if (userExists) {
+      console.warn("Register attempt for existing user:", normalizedEmail);
       if (adminInvite) {
         userExists.role = "admin";
 

@@ -51,8 +51,15 @@ export const loginUser = async (payload: LoginPayload) => {
 };
 
 export const registerUser = async (payload: RegisterPayload) => {
-  const { data } = await authClient.post<AuthResponse>("/auth/register", payload);
-  return data;
+  try {
+    const { data } = await authClient.post<AuthResponse>("/auth/register", payload);
+    return data;
+  } catch (error) {
+    // Provide the API error message when available for clearer UI feedback
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const apiMessage = (error as any)?.response?.data?.message;
+    throw new Error(apiMessage || (error as Error).message || "Registration failed");
+  }
 };
 
 export const forgotPassword = async (payload: ForgotPasswordPayload) => {
