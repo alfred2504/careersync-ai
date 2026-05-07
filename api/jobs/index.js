@@ -1,18 +1,16 @@
-import connectDB from '../../server/config/db.js';
-import Job from '../../server/models/Job.js';
-
 export default async function handler(req, res) {
-  try {
-    await connectDB();
-  } catch (error) {
-    return res.status(503).json({ message: 'Database unavailable', details: error.message });
-  }
-
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
+    const [{ default: connectDB }, { default: Job }] = await Promise.all([
+      import('../../server/config/db.js'),
+      import('../../server/models/Job.js'),
+    ]);
+
+    await connectDB();
+
     const { title, location } = req.query;
     const filter = {};
 
