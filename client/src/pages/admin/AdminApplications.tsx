@@ -49,54 +49,81 @@ export default function AdminApplications() {
   };
 
   return (
-    <div className="site-card">
-      <h2>Manage Applications</h2>
+    <div className="container" style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
+      <section className="admin-page-header">
+        <div>
+          <p className="section-kicker">Applications</p>
+          <h1>Manage Applications</h1>
+          <p>Review candidates and approve or reject them from one place.</p>
+        </div>
+      </section>
 
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ marginRight: 8 }}>Select job:</label>
+      <section className="site-card admin-form-card" style={{ marginBottom: "1.25rem" }}>
+        <label className="admin-form-label" htmlFor="job-select">
+          Select job
+        </label>
         <select
+          id="job-select"
+          className="search-input"
           value={selectedJobId || ""}
           onChange={(e) => setSelectedJobId(e.target.value)}
         >
           {jobs.map((j) => (
-            <option key={j._id} value={j._id}>{j.title} — {j.company}</option>
+            <option key={j._id} value={j._id}>
+              {j.title} — {j.company}
+            </option>
           ))}
         </select>
-      </div>
+      </section>
 
-      {loading ? (
-        <p>Loading applications...</p>
-      ) : (
-        <div>
-          {applications.length === 0 ? (
-            <p>No applications for this job.</p>
-          ) : (
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              {applications.map((a) => (
-                <li key={a._id} style={{ borderBottom: "1px solid #eee", padding: 12 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ flex: 1 }}>
-                      <strong>{a.user?.name || "Unknown"}</strong> &lt;{a.user?.email}&gt;
-                      <div style={{ marginTop: 8 }}>{a.coverLetter || "(no cover letter)"}</div>
-                      <div style={{ marginTop: 8, fontSize: 12, color: "#666" }}>
-                        CV: {a.cvOriginalName || "(none)"} — Status: {a.status}
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      {a.status !== "accepted" && (
-                        <button onClick={() => handleStatus(a._id, "accepted")}>Approve</button>
-                      )}
-                      {a.status !== "rejected" && (
-                        <button onClick={() => handleStatus(a._id, "rejected")}>Reject</button>
-                      )}
-                    </div>
+      <section className="site-card admin-list-card">
+        {loading ? (
+          <p>Loading applications...</p>
+        ) : applications.length === 0 ? (
+          <div className="admin-empty-state">
+            <h3>No applications yet</h3>
+            <p>Applications for the selected job will show here once candidates start applying.</p>
+          </div>
+        ) : (
+          applications.map((a) => (
+            <article key={a._id} className="admin-list-item admin-application-item">
+              <div className="admin-application-content">
+                <div className="admin-application-topline">
+                  <div>
+                    <h3>{a.user?.name || "Unknown"}</h3>
+                    <p>{a.user?.email}</p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+                  <span className={`job-status job-status-${a.status || "pending"}`}>
+                    {(a.status || "pending").toUpperCase()}
+                  </span>
+                </div>
+
+                <p className="admin-application-cover">
+                  {a.coverLetter || "No cover letter provided."}
+                </p>
+
+                <div className="admin-application-meta">
+                  <span>CV: {a.cvOriginalName || "Uploaded file"}</span>
+                  <span>Submitted: {a.createdAt ? new Date(a.createdAt).toLocaleString() : "Recently"}</span>
+                </div>
+              </div>
+
+              <div className="admin-list-actions">
+                {a.status !== "accepted" ? (
+                  <button className="btn-secondary" onClick={() => handleStatus(a._id, "accepted")}>
+                    Approve
+                  </button>
+                ) : null}
+                {a.status !== "rejected" ? (
+                  <button className="btn-secondary" onClick={() => handleStatus(a._id, "rejected")}>
+                    Reject
+                  </button>
+                ) : null}
+              </div>
+            </article>
+          ))
+        )}
+      </section>
     </div>
   );
 }
