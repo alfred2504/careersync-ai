@@ -1,4 +1,4 @@
-import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 // Navbar rendered globally via AuthenticatedLayout
@@ -60,7 +60,6 @@ export default function JobDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [applyCoverLetter, setApplyCoverLetter] = useState("");
-  const [applyCv, setApplyCv] = useState<File | null>(null);
   const [applyStatus, setApplyStatus] = useState("");
   const [applyError, setApplyError] = useState("");
   const [isApplying, setIsApplying] = useState(false);
@@ -145,12 +144,11 @@ export default function JobDetails() {
       const response = await applyForJob({
         jobId: job._id,
         coverLetter: applyCoverLetter,
-        cv: applyCv,
+        cv: null,
       });
 
       setApplyStatus(response?.message || "Application submitted successfully");
       setApplyCoverLetter("");
-      setApplyCv(null);
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message || error.message || "Failed to submit application"
@@ -197,9 +195,7 @@ export default function JobDetails() {
     }
   };
 
-  const handleCvChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setApplyCv(event.target.files?.[0] || null);
-  };
+
 
   return (
     <div className="jobs-page">
@@ -294,14 +290,9 @@ export default function JobDetails() {
               <div className="detail-card">
                 <h3>Apply Job</h3>
                 <form className="message-form" onSubmit={handleApplySubmit}>
-                  <input
-                    className="search-input"
-                    type="file"
-                    onChange={handleCvChange}
-                  />
                   <textarea
                     className="search-input message-area"
-                    placeholder="Write a short cover letter"
+                    placeholder="Write a short cover letter (optional)"
                     value={applyCoverLetter}
                     onChange={(event) => setApplyCoverLetter(event.target.value)}
                   />
