@@ -6,6 +6,7 @@ import Contact from "../pages/Contact";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
+import AIInsights from "../pages/AIInsights";
 import JobDetails from "../pages/JobDetails.tsx";
 import AdminJobs from "../pages/admin/AdminJobs";
 import AdminPostJob from "../pages/admin/AdminPostJob";
@@ -18,6 +19,8 @@ export default function AppRoutes() {
       <Route path="/jobs" element={<Jobs />} />
       <Route path="/jobs/:id" element={<JobDetails />} />
       <Route path="/job/:id" element={<JobDetails />} />
+      <Route path="/ai-insights" element={<AIInsights />} />
+      <Route path="/analyzer" element={<AIInsights />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />

@@ -22,7 +22,8 @@ const uploadsDir = path.resolve(__dirname, "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api/auth", requireDatabase, authRoutes);

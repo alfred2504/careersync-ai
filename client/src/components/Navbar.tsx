@@ -18,16 +18,8 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link
-        to="/"
-        className="navbar-brand"
-        onClick={closeMenu}
-      >
-        <img
-          src="/logo.png"
-          alt="CareerSync AI"
-          className="navbar-brand-logo"
-        />
+      <Link to="/" className="navbar-brand" onClick={closeMenu}>
+        <img src="/logo.png" alt="CareerSync AI" className="navbar-brand-logo" />
         <div className="navbar-logo">CareerSync AI</div>
       </Link>
 
@@ -45,50 +37,33 @@ export default function Navbar() {
 
       <div className={`navbar-menu ${menuOpen ? "is-open" : ""}`}>
         <ul className="navbar-nav">
-          <li>
-            <Link to="/" onClick={closeMenu}>Home</Link>
-          </li>
-          <li>
-            <Link to="/jobs" onClick={closeMenu}>Jobs</Link>
-          </li>
-          <li>
-            <Link to="/about" onClick={closeMenu}>About Us</Link>
-          </li>
-          <li>
-            <Link to="/contact" onClick={closeMenu}>Contact Us</Link>
-          </li>
+          <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+          <li><Link to="/jobs" onClick={closeMenu}>Jobs</Link></li>
+          {user ? <li><Link to="/ai-insights" onClick={closeMenu}>AI Insights</Link></li> : null}
+          <li><Link to="/about" onClick={closeMenu}>About Us</Link></li>
+          <li><Link to="/contact" onClick={closeMenu}>Contact Us</Link></li>
           {user?.role === "admin" ? (
             <>
-              <li>
-                <Link to="/admin/jobs" onClick={closeMenu}>Admin</Link>
-              </li>
-              <li>
-                <Link to="/admin/jobs/new" onClick={closeMenu}>Post Job</Link>
-              </li>
+              <li><Link to="/admin/jobs" onClick={closeMenu}>Admin</Link></li>
+              <li><Link to="/admin/jobs/new" onClick={closeMenu}>Post Job</Link></li>
             </>
           ) : null}
         </ul>
 
-          <div className="navbar-auth">
-            <ThemeToggle />
-            {user ? (
-              <>
-                <span style={{ color: 'white', fontWeight: 600, marginRight: '0.5rem' }}>{user.name || user.email}</span>
-                <button type="button" className="btn-secondary" onClick={handleLogout}>
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="btn-secondary" onClick={closeMenu}>
-                  Login
-                </Link>
-                <Link to="/register" className="btn" onClick={closeMenu}>
-                  Register
-                </Link>
-              </>
-            )}
-          </div>
+        <div className="navbar-auth">
+          <ThemeToggle />
+          {user ? (
+            <>
+              <span style={{ color: 'white', fontWeight: 600, marginRight: '0.5rem' }}>{user.name || user.email}</span>
+              <button type="button" className="btn-secondary" onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn-secondary" onClick={closeMenu}>Login</Link>
+              <Link to="/register" className="btn" onClick={closeMenu}>Register</Link>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
