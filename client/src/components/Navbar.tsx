@@ -45,6 +45,7 @@ export default function Navbar() {
           {user?.role === "admin" ? (
             <>
               <li><Link to="/admin/jobs" onClick={closeMenu}>Admin</Link></li>
+              <li><Link to="/admin/applications" onClick={closeMenu}>Applications</Link></li>
               <li><Link to="/admin/jobs/new" onClick={closeMenu}>Post Job</Link></li>
             </>
           ) : null}

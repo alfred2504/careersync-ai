@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllJobs } from "../../services/jobService";
 import { getApplications, updateApplicationStatus } from "../../services/applicationService";
 
