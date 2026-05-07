@@ -4,12 +4,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [{ default: connectDB }, authController] = await Promise.all([
+    const [{ default: connectDB, isDatabaseConnected }, authController] = await Promise.all([
       import('../../server/config/db.js'),
       import('../../server/controllers/authController.js'),
     ]);
 
     await connectDB();
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
+
     return authController.login(req, res);
   } catch (error) {
     console.error('Login error:', error);

@@ -4,12 +4,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [{ default: connectDB }, { default: Job }] = await Promise.all([
+    const [{ default: connectDB, isDatabaseConnected }, { default: Job }] = await Promise.all([
       import('../../server/config/db.js'),
       import('../../server/models/Job.js'),
     ]);
 
     await connectDB();
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
 
     const { title, location } = req.query;
     const filter = {};
