@@ -10,6 +10,7 @@ import AIInsights from "../pages/AIInsights";
 import JobDetails from "../pages/JobDetails.tsx";
 import AdminJobs from "../pages/admin/AdminJobs";
 import AdminPostJob from "../pages/admin/AdminPostJob";
+import AdminApplications from "../pages/admin/AdminApplications";
 
 export default function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ export default function AppRoutes() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/jobs" element={<AdminJobs />} />
       <Route path="/admin/jobs/new" element={<AdminPostJob />} />
+      <Route path="/admin/applications" element={<AdminApplications />} />
     </Routes>
   );
 }

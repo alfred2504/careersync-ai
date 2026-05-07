@@ -48,3 +48,19 @@ export const applyForJob = async ({ jobId, coverLetter, cv }: ApplyJobPayload) =
     throw error;
   }
 };
+
+export const getApplications = async (jobId: string) => {
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const { data } = await applicationClient.get(`/applications/${jobId}`, { headers });
+  return data;
+};
+
+export const updateApplicationStatus = async (applicationId: string, status: string) => {
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const { data } = await applicationClient.put(`/applications/${applicationId}/status`, { status }, { headers });
+  return data;
+};

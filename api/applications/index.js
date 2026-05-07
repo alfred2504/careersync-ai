@@ -7,24 +7,16 @@ export default async function handler(req, res) {
     const [
       { default: connectDB, isDatabaseConnected },
       authModule,
-      JobModel,
       ApplicationModel,
       multerModule,
-      pathModule,
-      fsModule,
     ] = await Promise.all([
       import('../../server/config/db.js'),
       import('../../server/middleware/authMiddleware.js'),
-      import('../../server/models/Job.js'),
       import('../../server/models/Application.js'),
       import('multer'),
-      import('path'),
-      import('fs'),
     ]);
 
     const multer = multerModule.default || multerModule;
-    const path = pathModule.default || pathModule;
-    const fs = fsModule.default || fsModule;
 
     await connectDB();
     if (!isDatabaseConnected()) {
@@ -34,23 +26,8 @@ export default async function handler(req, res) {
     // Use protect middleware from authModule
     const protect = authModule.protect;
 
-    // Ensure uploads directory exists
-    const uploadsDir = path.resolve('uploads');
-    try {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    } catch (err) {
-      console.warn('Failed to ensure uploads directory:', err);
-    }
-
-    const storage = multer.diskStorage({
-      destination: (_req, _file, cb) => cb(null, uploadsDir),
-      filename: (_req, file, cb) => {
-        const safeOriginalName = path.basename(file.originalname).replace(/\s+/g, '_');
-        cb(null, `${Date.now()}-${safeOriginalName}`);
-      },
-    });
-
-    const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+    // Use memory storage for serverless environments (avoid writing to read-only filesystem)
+    const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
     // Run auth protect, then multer, then application logic
     return protect(req, res, () => {
@@ -75,7 +52,7 @@ export default async function handler(req, res) {
             job: jobId,
             user: req.user._id,
             coverLetter,
-            cvUrl: req.file ? `${req.protocol}://${req.headers.host}/uploads/${req.file.filename}` : existing?.cvUrl,
+            cvUrl: null, // Serverless: not persisting uploaded file to disk
             cvOriginalName: req.file?.originalname || existing?.cvOriginalName,
           };
 
