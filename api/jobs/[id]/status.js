@@ -5,14 +5,30 @@ export default async function handler(req, res) {
 
   try {
     const [{ default: connectDB }, { default: Job }, jwtModule, { default: User }, adminAccess] = await Promise.all([
-      import('../../../../server/config/db.js'),
-      import('../../../../server/models/Job.js'),
+      import('../../../server/config/db.js'),
+      import('../../../server/models/Job.js'),
       import('jsonwebtoken'),
-      import('../../../../server/models/User.js'),
-      import('../../../../server/config/adminAccess.js'),
+      import('../../../server/models/User.js'),
+      import('../../../server/config/adminAccess.js'),
     ]);
 
     await connectDB();
+
+    const pathname = (() => {
+      try {
+        return new URL(req.url, 'http://localhost').pathname;
+      } catch {
+        return req.url || '';
+      }
+    })();
+
+    const jobId =
+      (typeof req.query?.id === 'string' && req.query.id) ||
+      pathname.split('/').filter(Boolean).slice(-2, -1)[0];
+
+    if (!jobId) {
+      return res.status(400).json({ message: 'Job ID is required' });
+    }
 
     const authHeader = req.headers.authorization || '';
     if (!authHeader.startsWith('Bearer ')) {
@@ -23,7 +39,7 @@ export default async function handler(req, res) {
     let decoded;
     try {
       decoded = jwtModule.default.verify(token, process.env.JWT_SECRET || 'supersecret');
-    } catch (error) {
+    } catch {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
@@ -33,7 +49,7 @@ export default async function handler(req, res) {
     }
 
     const { status } = req.body;
-    const job = await Job.findByIdAndUpdate(req.query.id, { status }, { new: true });
+    const job = await Job.findByIdAndUpdate(jobId, { status }, { new: true });
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }

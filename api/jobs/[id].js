@@ -11,7 +11,24 @@ export default async function handler(req, res) {
 
     await connectDB();
 
-    const job = await Job.findById(req.query.id);
+    const pathname = (() => {
+      try {
+        return new URL(req.url, 'http://localhost').pathname;
+      } catch {
+        return req.url || '';
+      }
+    })();
+
+    const jobId =
+      (typeof req.query?.id === 'string' && req.query.id) ||
+      (typeof req.query?.jobId === 'string' && req.query.jobId) ||
+      pathname.split('/').filter(Boolean).pop();
+
+    if (!jobId) {
+      return res.status(400).json({ message: 'Job ID is required' });
+    }
+
+    const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
