@@ -35,9 +35,14 @@
   },
   "homepage": "https://github.com/alfred2504/careersync-ai#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "concurrently": "^9.2.1",
     "dotenv": "^17.4.2",
     "mongodb": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.5.0",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.104.0",
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {

@@ -1,91 +1,84 @@
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      const [
-        { default: connectDB, isDatabaseConnected },
-        authModule,
-        ApplicationModel,
-      ] = await Promise.all([
-        import('../../server/config/db.js'),
-        import('../../server/middleware/authMiddleware.js'),
-        import('../../server/models/Application.js'),
-      ]);
+  try {
+    const [
+      { default: connectDB, isDatabaseConnected },
+      authModule,
+      ApplicationModel,
+      JobModel,
+      multerModule,
+      mongooseModule,
+    ] = await Promise.all([
+      import('../../server/config/db.js'),
+      import('../../server/middleware/authMiddleware.js'),
+      import('../../server/models/Application.js'),
+      import('../../server/models/Job.js'),
+      import('multer'),
+      import('mongoose'),
+    ]);
 
-      await connectDB();
-      if (!isDatabaseConnected()) {
-        return res.status(503).json({ message: 'Database unavailable' });
-      }
+    const mongoose = mongooseModule.default || mongooseModule;
+    const multer = multerModule.default || multerModule;
+    const protect = authModule.protect;
 
-      const protect = authModule.protect;
+    await connectDB();
+    if (!isDatabaseConnected()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
 
-      return protect(req, res, async () => {
-        try {
-          const { jobId, coverLetter } = req.body;
+    if (req.method === 'POST') {
+      const upload = multer({
+        storage: multer.memoryStorage(),
+        limits: {
+          fileSize: 5 * 1024 * 1024,
+        },
+      });
 
-          if (!jobId) {
-            return res.status(400).json({ message: 'Job ID is required' });
+      return protect(req, res, () => {
+        upload.single('cv')(req, res, async (uploadError) => {
+          if (uploadError) {
+            return res.status(400).json({ message: uploadError.message });
           }
 
-          const existing = await ApplicationModel.default.findOne({
-            job: jobId,
-            user: req.user._id,
-          });
+          try {
+            const { jobId, coverLetter } = req.body;
 
-          const applicationData = {
-            job: jobId,
-            user: req.user._id,
-            coverLetter: coverLetter || null,
-            cvUrl: null, // Serverless: CVs not persisted
-            cvOriginalName: null,
-          };
+            if (!jobId) {
+              return res.status(400).json({ message: 'Job ID is required' });
+            }
 
-          const application = existing
-            ? await ApplicationModel.default.findByIdAndUpdate(existing._id, applicationData, {
-                new: true,
-                runValidators: true,
-              })
-            : await ApplicationModel.default.create(applicationData);
+            const existing = await ApplicationModel.default.findOne({
+              job: jobId,
+              user: req.user._id,
+            });
 
-          return res.status(201).json({
-            message: existing ? 'Application updated successfully' : 'Application submitted successfully',
-            application,
-          });
-        } catch (error) {
-          console.error('Apply error:', error);
-          return res.status(500).json({ message: 'Failed to apply' });
-        }
+            const applicationData = {
+              job: jobId,
+              user: req.user._id,
+              coverLetter: coverLetter || null,
+              cvUrl: existing?.cvUrl || null,
+              cvOriginalName: req.file?.originalname || existing?.cvOriginalName || null,
+            };
+
+            const application = existing
+              ? await ApplicationModel.default.findByIdAndUpdate(existing._id, applicationData, {
+                  new: true,
+                  runValidators: true,
+                })
+              : await ApplicationModel.default.create(applicationData);
+
+            return res.status(201).json({
+              message: existing ? 'Application updated successfully' : 'Application submitted successfully',
+              application,
+            });
+          } catch (error) {
+            console.error('Apply error:', error);
+            return res.status(500).json({ message: 'Failed to apply' });
+          }
+        });
       });
-    } catch (error) {
-      console.error('Applications handler error:', error);
-      return res.status(500).json({ message: error.message || 'Internal server error' });
     }
-  }
 
-  if (req.method === 'GET') {
-    try {
-      const [
-        { default: connectDB, isDatabaseConnected },
-        authModule,
-        JobModel,
-        ApplicationModel,
-        mongooseModule,
-      ] = await Promise.all([
-        import('../../server/config/db.js'),
-        import('../../server/middleware/authMiddleware.js'),
-        import('../../server/models/Job.js'),
-        import('../../server/models/Application.js'),
-        import('mongoose'),
-      ]);
-
-      const mongoose = mongooseModule.default || mongooseModule;
-
-      await connectDB();
-      if (!isDatabaseConnected()) {
-        return res.status(503).json({ message: 'Database unavailable' });
-      }
-
-      const protect = authModule.protect;
-
+    if (req.method === 'GET') {
       return protect(req, res, async () => {
         try {
           const jobId = req.url.split('/applications/')[1];
@@ -121,12 +114,12 @@ export default async function handler(req, res) {
           return res.status(500).json({ message: 'Failed to fetch applications' });
         }
       });
-    } catch (error) {
-      console.error('Applications handler error:', error);
-      return res.status(500).json({ message: error.message || 'Internal server error' });
     }
-  }
 
-  return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
+  } catch (error) {
+    console.error('Applications handler error:', error);
+    return res.status(500).json({ message: error.message || 'Internal server error' });
+  }
 }
 

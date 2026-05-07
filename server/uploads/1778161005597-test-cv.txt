@@ -1,0 +1,3 @@
+CareerSync AI test CV
+Name: Test Admin
+Skills: Testing, Deployment, Debugging

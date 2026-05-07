@@ -14,27 +14,29 @@ export type ApplyJobPayload = {
   cv?: File | null;
 };
 
-export const applyForJob = async ({ jobId, coverLetter, cv: _cv }: ApplyJobPayload) => {
+export const applyForJob = async ({ jobId, coverLetter, cv }: ApplyJobPayload) => {
+  const formData = new FormData();
+  formData.append("jobId", jobId);
+
+  if (coverLetter) {
+    formData.append("coverLetter", coverLetter);
+  }
+
+  if (cv) {
+    formData.append("cv", cv);
+  }
+
   const token = getAuthToken();
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
+  const headers: Record<string, string> = {};
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
   try {
-    const { data } = await applicationClient.post(
-      "/applications",
-      {
-        jobId,
-        coverLetter: coverLetter || null,
-        // Note: cv file uploads not supported in serverless environment
-        // Store coverLetter as text instead
-      },
-      { headers }
-    );
+    const { data } = await applicationClient.post("/applications", formData, {
+      headers,
+    });
 
     return data;
   } catch (error) {
