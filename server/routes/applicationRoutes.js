@@ -61,6 +61,8 @@ router.post("/", protect, handleCvUpload, async (req, res) => {
         ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
         : existing?.cvUrl,
       cvOriginalName: req.file?.originalname || existing?.cvOriginalName,
+      cvMimeType: req.file?.mimetype || existing?.cvMimeType,
+      cvData: req.file ? fs.readFileSync(req.file.path) : existing?.cvData,
     };
 
     const application = existing
@@ -78,6 +80,66 @@ router.post("/", protect, handleCvUpload, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Failed to apply" });
+  }
+});
+
+// ✅ DOWNLOAD APPLICATION CV (Poster/Admin only)
+router.get("/:applicationId/cv", protect, async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.applicationId)) {
+      return res.status(400).json({ message: "Invalid application ID" });
+    }
+
+    const application = await Application.findById(req.params.applicationId).select(
+      "+cvData cvMimeType cvOriginalName cvUrl job"
+    );
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const job = await Job.findById(application.job).select("createdBy");
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const isOwner = String(job.createdBy) === String(req.user._id);
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        message: "You can only download CVs for jobs you posted",
+      });
+    }
+
+    const safeName = (application.cvOriginalName || "candidate-cv").replace(/[\\/:*?"<>|]/g, "_");
+
+    if (application.cvData && application.cvData.length > 0) {
+      res.setHeader("Content-Type", application.cvMimeType || "application/octet-stream");
+      res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+      return res.send(application.cvData);
+    }
+
+    if (application.cvUrl) {
+      let storedFilename = "";
+
+      try {
+        storedFilename = path.basename(new URL(application.cvUrl).pathname);
+      } catch {
+        storedFilename = path.basename(application.cvUrl);
+      }
+
+      const fallbackPath = path.resolve(uploadsDir, storedFilename);
+
+      if (storedFilename && fs.existsSync(fallbackPath)) {
+        return res.download(fallbackPath, safeName);
+      }
+    }
+
+    return res.status(404).json({ message: "No CV found for this application" });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to download CV" });
   }
 });
 

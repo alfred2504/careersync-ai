@@ -21,6 +21,13 @@ const applicationSchema = new mongoose.Schema(
     cvOriginalName: {
       type: String,
     },
+    cvMimeType: {
+      type: String,
+    },
+    cvData: {
+      type: Buffer,
+      select: false,
+    },
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],

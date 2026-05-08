@@ -64,3 +64,54 @@ export const updateApplicationStatus = async (applicationId: string, status: str
   const { data } = await applicationClient.put(`/applications/${applicationId}/status`, { status }, { headers });
   return data;
 };
+
+const extractFilename = (contentDisposition?: string, fallback = "candidate-cv") => {
+  if (!contentDisposition) {
+    return fallback;
+  }
+
+  const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1]);
+  }
+
+  const standardMatch = contentDisposition.match(/filename="?([^";]+)"?/i);
+  if (standardMatch?.[1]) {
+    return standardMatch[1];
+  }
+
+  return fallback;
+};
+
+export const downloadApplicationCv = async (applicationId: string, fallbackName?: string) => {
+  const token = getAuthToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const response = await applicationClient.get(`/applications/${applicationId}/cv`, {
+    headers,
+    responseType: "blob",
+    maxRedirects: 5,
+  });
+
+  const rawContentType = response.headers["content-type"];
+  const contentType =
+    typeof rawContentType === "string"
+      ? rawContentType
+      : Array.isArray(rawContentType)
+        ? rawContentType[0]
+        : "application/octet-stream";
+  const contentDisposition = response.headers["content-disposition"];
+  const filename = extractFilename(contentDisposition, fallbackName || "candidate-cv");
+
+  const blob = new Blob([response.data], { type: contentType });
+  const objectUrl = URL.createObjectURL(blob);
+
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+
+  URL.revokeObjectURL(objectUrl);
+};

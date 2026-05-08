@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllJobs } from "../../services/jobService";
-import { getApplications, updateApplicationStatus } from "../../services/applicationService";
+import { downloadApplicationCv, getApplications, updateApplicationStatus } from "../../services/applicationService";
 
 export default function AdminApplications() {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -45,6 +45,15 @@ export default function AdminApplications() {
     } catch (err) {
       console.error("Failed to update status:", err);
       alert("Failed to update application status");
+    }
+  };
+
+  const handleDownloadCv = async (applicationId: string, cvOriginalName?: string) => {
+    try {
+      await downloadApplicationCv(applicationId, cvOriginalName || "candidate-cv");
+    } catch (err) {
+      console.error("Failed to download CV:", err);
+      alert("Failed to download CV");
     }
   };
 
@@ -109,6 +118,9 @@ export default function AdminApplications() {
               </div>
 
               <div className="admin-list-actions">
+                <button className="btn-secondary" onClick={() => handleDownloadCv(a._id, a.cvOriginalName)}>
+                  Download CV
+                </button>
                 {a.status !== "accepted" ? (
                   <button className="btn-secondary" onClick={() => handleStatus(a._id, "accepted")}>
                     Approve

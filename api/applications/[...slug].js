@@ -82,6 +82,58 @@ export default async function handler(req, res) {
       });
     }
 
+    if (req.method === 'GET' && requestSegments.length === 2 && requestSegments[1] === 'cv') {
+      const applicationId = requestSegments[0];
+
+      return protect(req, res, async () => {
+        try {
+          if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+            return res.status(400).json({ message: 'Invalid application ID' });
+          }
+
+          const application = await ApplicationModel.default.findById(applicationId).select(
+            '+cvData cvMimeType cvOriginalName cvUrl job'
+          );
+
+          if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+          }
+
+          const job = await JobModel.default.findById(application.job).select('createdBy');
+
+          if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+          }
+
+          const isOwner = String(job.createdBy) === String(req.user._id);
+          const isAdmin = req.user.role === 'admin';
+
+          if (!isOwner && !isAdmin) {
+            return res.status(403).json({
+              message: 'You can only download CVs for jobs you posted',
+            });
+          }
+
+          const safeName = (application.cvOriginalName || 'candidate-cv').replace(/[\\/:*?"<>|]/g, '_');
+
+          if (application.cvData && application.cvData.length > 0) {
+            res.setHeader('Content-Type', application.cvMimeType || 'application/octet-stream');
+            res.setHeader('Content-Disposition', `attachment; filename="${safeName}"`);
+            return res.send(application.cvData);
+          }
+
+          if (application.cvUrl) {
+            return res.redirect(application.cvUrl);
+          }
+
+          return res.status(404).json({ message: 'No CV found for this application' });
+        } catch (error) {
+          console.error('Download CV error:', error);
+          return res.status(500).json({ message: 'Failed to download CV' });
+        }
+      });
+    }
+
     if (req.method === 'PUT' && requestSegments.length === 2 && requestSegments[1] === 'status') {
       const applicationId = requestSegments[0];
 

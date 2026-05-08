@@ -71,6 +71,8 @@ export default async function handler(req, res) {
               coverLetter: coverLetter || null,
               cvUrl: existing?.cvUrl || null,
               cvOriginalName: req.file?.originalname || existing?.cvOriginalName || null,
+              cvMimeType: req.file?.mimetype || existing?.cvMimeType || null,
+              cvData: req.file?.buffer || existing?.cvData || null,
             };
 
             const application = existing
