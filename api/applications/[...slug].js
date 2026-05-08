@@ -16,19 +16,38 @@ export default async function handler(req, res) {
 
     const mongoose = mongooseModule.default || mongooseModule;
     const protect = authModule.protect;
+    const pathname = (() => {
+      try {
+        return new URL(req.url, 'http://localhost').pathname;
+      } catch {
+        return req.url || '';
+      }
+    })();
+
+    const cleanSegments = (segments) =>
+      segments
+        .map((segment) => String(segment).split('?')[0].split('#')[0].trim())
+        .filter(Boolean);
+
     const slug = Array.isArray(req.query?.slug)
-      ? req.query.slug
-      : String(req.url.split('/api/applications/')[1] || '')
-          .split('/')
-          .filter(Boolean);
+      ? cleanSegments(req.query.slug)
+      : cleanSegments(
+          String(req.query?.slug || req.query?.jobId || req.query?.applicationId || '')
+            .split('/')
+            .filter(Boolean)
+        );
+
+    const pathSegments = cleanSegments(pathname.split('/').filter(Boolean));
+    const routeIndex = pathSegments.indexOf('applications');
+    const requestSegments = slug.length ? slug : routeIndex >= 0 ? pathSegments.slice(routeIndex + 1) : [];
 
     await connectDB();
     if (!isDatabaseConnected()) {
       return res.status(503).json({ message: 'Database unavailable' });
     }
 
-    if (req.method === 'GET' && slug.length === 1) {
-      const jobId = slug[0];
+    if (req.method === 'GET' && requestSegments.length === 1) {
+      const jobId = requestSegments[0];
 
       return protect(req, res, async () => {
         try {
@@ -63,8 +82,8 @@ export default async function handler(req, res) {
       });
     }
 
-    if (req.method === 'PUT' && slug.length === 2 && slug[1] === 'status') {
-      const applicationId = slug[0];
+    if (req.method === 'PUT' && requestSegments.length === 2 && requestSegments[1] === 'status') {
+      const applicationId = requestSegments[0];
 
       return protect(req, res, async () => {
         try {

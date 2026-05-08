@@ -19,6 +19,20 @@ export default async function handler(req, res) {
     const mongoose = mongooseModule.default || mongooseModule;
     const multer = multerModule.default || multerModule;
     const protect = authModule.protect;
+    const pathname = (() => {
+      try {
+        return new URL(req.url, 'http://localhost').pathname;
+      } catch {
+        return req.url || '';
+      }
+    })();
+    const cleanSegments = (segments) =>
+      segments
+        .map((segment) => String(segment).split('?')[0].split('#')[0].trim())
+        .filter(Boolean);
+    const pathSegments = cleanSegments(pathname.split('/').filter(Boolean));
+    const routeIndex = pathSegments.indexOf('applications');
+    const requestSegments = routeIndex >= 0 ? pathSegments.slice(routeIndex + 1) : [];
 
     await connectDB();
     if (!isDatabaseConnected()) {
@@ -81,7 +95,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       return protect(req, res, async () => {
         try {
-          const jobId = req.url.split('/applications/')[1];
+          const jobId = requestSegments[0];
 
           if (!jobId || !mongoose.Types.ObjectId.isValid(jobId)) {
             return res.status(400).json({ message: 'Invalid job ID' });
