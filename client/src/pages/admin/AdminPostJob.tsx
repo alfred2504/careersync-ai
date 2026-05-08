@@ -77,9 +77,10 @@ export default function AdminPostJob() {
         </div>
       </section>
 
-      <section className="site-card">
-        <form className="admin-form" onSubmit={handleSubmit}>
-          <div className="admin-form-grid">
+      <section className="contact-card admin-form-card">
+        <form className="contact-form admin-form" onSubmit={handleSubmit}>
+          <div className="admin-form-section">
+            <div className="contact-row admin-form-grid">
             <label>
               Job Title
               <input className="search-input" value={form.title} onChange={(event) => updateField("title", event.target.value)} required />
@@ -109,13 +110,17 @@ export default function AdminPostJob() {
               <input className="search-input" value={form.experienceLevel} onChange={(event) => updateField("experienceLevel", event.target.value)} />
             </label>
           </div>
+          </div>
 
-          <label>
+          <div className="admin-form-section">
+            <label>
             Job Description
-            <textarea className="search-input admin-textarea" value={form.description} onChange={(event) => updateField("description", event.target.value)} required />
-          </label>
+            <textarea className="search-input message-area admin-textarea" value={form.description} onChange={(event) => updateField("description", event.target.value)} required />
+            </label>
+          </div>
 
-          <div className="admin-form-grid">
+          <div className="admin-form-section">
+            <div className="contact-row admin-form-grid">
             <label>
               Tags
               <input className="search-input" value={form.tags} onChange={(event) => updateField("tags", event.target.value)} placeholder="React, Remote, Full-time" />
@@ -128,6 +133,7 @@ export default function AdminPostJob() {
               Skills
               <input className="search-input" value={form.skills} onChange={(event) => updateField("skills", event.target.value)} placeholder="TypeScript, Node.js" />
             </label>
+          </div>
           </div>
 
           {error ? <p className="error-text admin-feedback">{error}</p> : null}
