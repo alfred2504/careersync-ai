@@ -3,8 +3,10 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 // Navbar rendered globally via AuthenticatedLayout
 import Footer from "../components/Footer";
+import { getAuthUser } from "../services/authService";
 import { getJobById, getJobs, type Job as JobItem } from "../services/jobService";
 import { applyForJob } from "../services/applicationService";
+import { draftFormText } from "../services/aiService";
 import { sendJobMessage } from "../services/messageService";
 
 
@@ -55,6 +57,7 @@ const deriveBulletPoints = (description?: string, fallbackLabel?: string) => {
 
 export default function JobDetails() {
   const { id } = useParams();
+  const user = getAuthUser();
   const [job, setJob] = useState<JobItem | null>(null);
   const [relatedJobs, setRelatedJobs] = useState<JobItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,6 +74,9 @@ export default function JobDetails() {
   const [messageStatus, setMessageStatus] = useState("");
   const [messageError, setMessageError] = useState("");
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isDraftingApplication, setIsDraftingApplication] = useState(false);
+  const [isDraftingMessage, setIsDraftingMessage] = useState(false);
+  const [draftError, setDraftError] = useState("");
 
   const overviewItems = useMemo(
     () =>
@@ -128,6 +134,22 @@ export default function JobDetails() {
     [job]
   );
 
+  const draftContext = useMemo(
+    () => ({
+      jobTitle: job?.title || "",
+      companyName: job?.company || "",
+      jobDescription: job?.description || "",
+      responsibilities: keyResponsibilities.join("\n"),
+      skills: professionalSkills.join("\n"),
+      candidateName: user?.name || "",
+      candidateEmail: user?.email || "",
+      candidatePhone: messagePhone,
+      coverLetter: applyCoverLetter,
+      message: messageBody,
+    }),
+    [applyCoverLetter, job, keyResponsibilities, messageBody, messagePhone, professionalSkills, user]
+  );
+
   const tags = job?.tags?.length ? job.tags : [job?.employmentType || "Full time", job?.category || "General", job?.location || "Zimbabwe"];
 
   const handleApplySubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -165,6 +187,70 @@ export default function JobDetails() {
 
   const handleCvChange = (event: ChangeEvent<HTMLInputElement>) => {
     setApplyCv(event.target.files?.[0] || null);
+  };
+
+  const applySuggestedContact = (drafts: {
+    suggestedName?: string;
+    suggestedEmail?: string;
+    suggestedPhone?: string;
+  }) => {
+    if (!messageName && drafts.suggestedName) {
+      setMessageName(drafts.suggestedName);
+    }
+
+    if (!messageEmail && drafts.suggestedEmail) {
+      setMessageEmail(drafts.suggestedEmail);
+    }
+
+    if (!messagePhone && drafts.suggestedPhone) {
+      setMessagePhone(drafts.suggestedPhone);
+    }
+  };
+
+  const handleDraftApplication = async () => {
+    if (!job?._id) {
+      return;
+    }
+
+    try {
+      setIsDraftingApplication(true);
+      setDraftError("");
+
+      const response = await draftFormText(draftContext);
+      if (response.drafts.coverLetter) {
+        setApplyCoverLetter(response.drafts.coverLetter);
+      }
+
+      applySuggestedContact(response.drafts);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to draft application text";
+      setDraftError(message);
+    } finally {
+      setIsDraftingApplication(false);
+    }
+  };
+
+  const handleDraftMessage = async () => {
+    if (!job?._id) {
+      return;
+    }
+
+    try {
+      setIsDraftingMessage(true);
+      setDraftError("");
+
+      const response = await draftFormText(draftContext);
+      applySuggestedContact(response.drafts);
+
+      if (response.drafts.message) {
+        setMessageBody(response.drafts.message);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to draft message text";
+      setDraftError(message);
+    } finally {
+      setIsDraftingMessage(false);
+    }
   };
 
   const handleMessageSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -295,6 +381,11 @@ export default function JobDetails() {
             <aside className="job-details-sidebar">
               <div className="detail-card">
                 <h3>Apply Job</h3>
+                {user ? (
+                  <button className="btn" type="button" onClick={handleDraftApplication} disabled={isDraftingApplication} style={{ marginBottom: "0.75rem" }}>
+                    {isDraftingApplication ? "Drafting..." : "Draft cover letter with AI"}
+                  </button>
+                ) : null}
                 <form className="message-form" onSubmit={handleApplySubmit}>
                   <input
                     className="search-input"
@@ -313,6 +404,7 @@ export default function JobDetails() {
                 </form>
                 {applyStatus ? <p className="detail-card-note success-text">{applyStatus}</p> : null}
                 {applyError ? <p className="detail-card-note error-text">{applyError}</p> : null}
+                {draftError ? <p className="detail-card-note error-text">{draftError}</p> : null}
                 <p className="detail-card-note">
                   Start your application using the latest job information from the database.
                 </p>
@@ -336,6 +428,11 @@ export default function JobDetails() {
 
               <div className="detail-card">
                 <h3>Send Us Message</h3>
+                {user ? (
+                  <button className="btn" type="button" onClick={handleDraftMessage} disabled={isDraftingMessage} style={{ marginBottom: "0.75rem" }}>
+                    {isDraftingMessage ? "Drafting..." : "Draft message with AI"}
+                  </button>
+                ) : null}
                 <form className="message-form" onSubmit={handleMessageSubmit}>
                   <input
                     className="search-input"
@@ -370,6 +467,7 @@ export default function JobDetails() {
                 </form>
                 {messageStatus ? <p className="detail-card-note success-text">{messageStatus}</p> : null}
                 {messageError ? <p className="detail-card-note error-text">{messageError}</p> : null}
+                {draftError ? <p className="detail-card-note error-text">{draftError}</p> : null}
               </div>
             </aside>
           </div>

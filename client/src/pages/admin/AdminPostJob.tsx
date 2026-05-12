@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 // Using global authenticated sidebar instead of AdminLayout
 import { createJob } from "../../services/jobService";
+import { generateJobDescription } from "../../services/aiService";
 
 const emptyForm = {
   title: "",
@@ -25,6 +26,7 @@ const splitList = (value: string) =>
 export default function AdminPostJob() {
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [drafting, setDrafting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -48,6 +50,41 @@ export default function AdminPostJob() {
     }),
     [form]
   );
+
+  const handleDraftDescription = async () => {
+    if (!form.title.trim() || !form.company.trim() || !form.location.trim()) {
+      setError("Enter job title, company, and location before generating the description.");
+      return;
+    }
+
+    try {
+      setDrafting(true);
+      setError("");
+      setSuccess("");
+
+      const response = await generateJobDescription({
+        jobTitle: form.title,
+        companyName: form.company,
+        department: form.category,
+        seniority: form.experienceLevel,
+        keyResponsibilities: [form.description, form.responsibilities, form.skills]
+          .map((value) => value.trim())
+          .filter(Boolean)
+          .join("\n"),
+      });
+
+      setForm((current) => ({
+        ...current,
+        description: response.jobDescription,
+      }));
+      setSuccess(response.fallback ? "AI description generated with fallback suggestions." : "AI description generated successfully.");
+    } catch (draftError) {
+      const message = draftError instanceof Error ? draftError.message : "Failed to generate job description.";
+      setError(message);
+    } finally {
+      setDrafting(false);
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -114,7 +151,12 @@ export default function AdminPostJob() {
 
           <div className="admin-form-section">
             <label>
-            Job Description
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "center", marginBottom: "0.5rem" }}>
+              <span>Job Description</span>
+              <button type="button" className="btn" onClick={handleDraftDescription} disabled={drafting}>
+                {drafting ? "Generating..." : "Generate with AI"}
+              </button>
+            </div>
             <textarea className="search-input message-area admin-textarea" value={form.description} onChange={(event) => updateField("description", event.target.value)} required />
             </label>
           </div>
